@@ -2,13 +2,19 @@
 <html lang="zh">
 <head>
 <meta charset="utf-8">
-<title>看拼音写词语练习</title>
+<title>看拼音写词语</title>
 
 <style>
-/* 页面大小，专门为打印准备 */
+/* ====== ⭐① 调整格子大小（改这里就行） ====== */
+:root {
+  --box-size: 38px;   /* 田字格大小，改成 32 / 40 / 45 都可以 */
+  --box-gap: 6px;     /* 格子之间的间距 */
+}
+
+/* ====== 打印 A4 设置 ====== */
 @page {
   size: A4;
-  margin: 20mm;
+  margin: 18mm;
 }
 
 body {
@@ -16,44 +22,43 @@ body {
   color: #000;
 }
 
-/* 标题 */
 h1 {
   text-align: center;
   font-size: 28px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
-/* 基本信息 */
+/* 姓名栏 */
 .info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
   font-size: 16px;
+  margin-bottom: 18px;
 }
 
-/* 每一行词语 */
+/* 一道题一行 */
 .row {
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 /* 拼音 */
 .pinyin {
-  width: 160px;
-  font-size: 14px;
+  width: 180px;
+  font-size: 15px;
 }
 
-/* 田字格容器 */
+/* 田字格组 */
 .boxes {
   display: flex;
-  gap: 6px;
+  gap: var(--box-gap);
 }
 
 /* 单个田字格 */
 .box {
-  width: 40px;
-  height: 40px;
+  width: var(--box-size);
+  height: var(--box-size);
   border: 2px solid #2e8b57;
   position: relative;
 }
@@ -82,7 +87,6 @@ h1 {
   transform: translateY(-50%);
 }
 
-/* 打印时隐藏网页边距 */
 @media print {
   body {
     margin: 0;
@@ -101,7 +105,7 @@ h1 {
   <div>成绩：__________</div>
 </div>
 
-<!-- 👇👇👇 下面是题目区域 👇👇👇 -->
+<!-- ====== ⭐② 下面是你出题的地方 ====== -->
 
 <div class="row">
   <div class="pinyin">shān shuǐ</div>
@@ -112,7 +116,7 @@ h1 {
 </div>
 
 <div class="row">
-  <div class="pinyin">shǒu xīn</div>
+  <div class="pinyin">bái tiān</div>
   <div class="boxes">
     <div class="box"></div>
     <div class="box"></div>
@@ -120,7 +124,7 @@ h1 {
 </div>
 
 <div class="row">
-  <div class="pinyin">fēng yún</div>
+  <div class="pinyin">hé píng</div>
   <div class="boxes">
     <div class="box"></div>
     <div class="box"></div>
@@ -128,22 +132,14 @@ h1 {
 </div>
 
 <div class="row">
-  <div class="pinyin">hé hǎo</div>
+  <div class="pinyin">xīn xiān</div>
   <div class="boxes">
     <div class="box"></div>
     <div class="box"></div>
   </div>
 </div>
 
-<div class="row">
-  <div class="pinyin">shǔi tǔ</div>
-  <div class="boxes">
-    <div class="box"></div>
-    <div class="box"></div>
-  </div>
-</div>
-
-<!-- 👆👆👆 题目就按这个格式往下复制 👆👆👆 -->
+<!-- ⭐③ 不够就继续复制 row，A4 会自动排 -->
 
 </body>
 </html>
