@@ -2,34 +2,28 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>专业级 A4 拼音字帖生成器</title>
+    <title>教材标准拼音字帖生成器 - 云字体版</title>
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/pinyin-standard">
     <style>
+        /* 这里的 CSS 变量控制全局样式 */
         :root {
             --grid-size: 18mm;
-            --p-top: 15mm;
-            --p-bottom: 15mm;
-            --p-left: 15mm;
-            --p-right: 15mm;
+            --p-top: 15mm; --p-bottom: 15mm; --p-left: 15mm; --p-right: 15mm;
             --row-gap: 10mm;
             --grid-color: #ff0000;
+            /* 关键：云端拼音字体 + 楷体备选 */
+            --pinyin-font: 'Arial', "STKaiti", "KaiTi", "楷体", serif;
         }
         
         body { margin: 0; background: #525659; font-family: sans-serif; counter-reset: pageCounter; }
         
         .page {
-            width: 210mm;
-            height: 297mm;
-            /* 四向边距联动 */
+            width: 210mm; height: 297mm;
             padding: var(--p-top) var(--p-right) var(--p-bottom) var(--p-left);
-            margin: 10mm auto;
-            background: white;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            page-break-after: always;
+            margin: 10mm auto; background: white;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5); box-sizing: border-box;
+            display: flex; flex-direction: column; position: relative;
+            overflow: hidden; page-break-after: always;
         }
 
         .info-bar {
@@ -38,14 +32,12 @@
             padding-bottom: 2mm; margin-bottom: 5mm; flex-shrink: 0;
         }
 
-        .page-title { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 5mm; flex-shrink: 0; }
+        .page-title { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 5mm; }
 
         .render-area {
             display: flex; flex-wrap: wrap;
-            gap: var(--row-gap) 10mm;
-            align-content: flex-start; 
-            flex-grow: 1;
-            width: 100%;
+            gap: var(--row-gap) 10mm; align-content: flex-start; 
+            flex-grow: 1; width: 100%;
         }
 
         .page-footer {
@@ -56,7 +48,18 @@
 
         .word-group { display: flex; break-inside: avoid; }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
-        .pinyin { height: 10mm; font-size: 14pt; margin-bottom: 1mm; display: flex; align-items: flex-end; }
+
+        .pinyin { 
+            height: 10mm; 
+            font-family: var(--pinyin-font); 
+            font-size: 22pt; /* 加大字号以显示教材体细节 */
+            color: #000; 
+            margin-bottom: 1mm; 
+            display: flex; 
+            align-items: flex-end;
+            /* 针对拼音声调的特定优化 */
+            font-variant-ligatures: none;
+        }
         
         .tian-zi-ge { 
             width: var(--grid-size); height: var(--grid-size); 
@@ -66,13 +69,7 @@
         }
         .char-unit:first-child .tian-zi-ge { margin-left: 0; }
 
-        /* 虚线渲染 */
-        .type-tian {
-            background-image: 
-                repeating-linear-gradient(to right, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 4px),
-                repeating-linear-gradient(to bottom, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 4px);
-            background-position: 50% 0, 0 50%; background-size: 100% 1px, 1px 100%; background-repeat: no-repeat;
-        }
+        /* 虚线渲染逻辑 */
         .type-mi {
             background-image: 
                 repeating-linear-gradient(to right, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 4px),
@@ -81,20 +78,23 @@
                 repeating-linear-gradient(-45deg, var(--grid-color), var(--grid-color) 0.5px, transparent 0.5px, transparent 3px);
             background-position: 50% 0, 0 50%, 0 0, 0 0; background-size: 100% 1px, 1px 100%, 100% 100%, 100% 100%; background-repeat: no-repeat;
         }
+        .type-tian {
+            background-image: 
+                repeating-linear-gradient(to right, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 4px),
+                repeating-linear-gradient(to bottom, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 4px);
+            background-position: 50% 0, 0 50%; background-size: 100% 1px, 1px 100%; background-repeat: no-repeat;
+        }
 
-        /* 控制台优化 */
+        /* 侧边控制面板 */
         .controls {
             position: fixed; left: 10px; top: 10px; width: 280px;
             background: #fff; padding: 15px; border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100; display: flex; flex-direction: column; gap: 6px;
-            max-height: 95vh; overflow-y: auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); z-index: 100; 
+            display: flex; flex-direction: column; gap: 8px; font-size: 12px;
         }
-        .control-item { display: flex; flex-direction: column; font-size: 11px; }
+        textarea { font-size: 12px; resize: vertical; padding: 5px; }
         .margin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        
-        input[type="range"] { height: 14px; }
-        textarea { font-size: 12px; }
+        button { cursor: pointer; padding: 10px; border: none; border-radius: 4px; font-weight: bold; }
 
         @media print { .no-print { display: none !important; } .page { margin: 0; box-shadow: none; border: none; } }
     </style>
@@ -102,27 +102,31 @@
 <body>
 
 <div class="controls no-print">
-    <strong style="font-size: 14px;">内容与基础设置</strong>
-    <input type="text" id="titleInput" value="看拼音写汉字" oninput="updateUI()">
-    <textarea id="input" rows="3" oninput="updateUI()">nǐ hǎo, xìng fú, měi lǐ</textarea>
+    <strong style="font-size: 15px;">拼音教材字帖生成器</strong>
+    <textarea id="input" rows="4" oninput="updateUI()">nǐ hǎo, xìng fú, měi lǐ, xué xí</textarea>
     
     <hr>
-    <strong style="font-size: 14px;">独立边距调节 (mm)</strong>
+    <strong>四向边距 (mm)</strong>
     <div class="margin-grid">
-        <div class="control-item">上: <span id="pTopVal">15</span><input type="range" id="pTopRange" min="5" max="50" value="15" oninput="updateUI()"></div>
-        <div class="control-item">下: <span id="pBottomVal">15</span><input type="range" id="pBottomRange" min="5" max="50" value="15" oninput="updateUI()"></div>
-        <div class="control-item">左: <span id="pLeftVal">15</span><input type="range" id="pLeftRange" min="5" max="50" value="15" oninput="updateUI()"></div>
-        <div class="control-item">右: <span id="pRightVal">15</span><input type="range" id="pRightRange" min="5" max="50" value="15" oninput="updateUI()"></div>
+        <label>上: <span id="pTopVal">15</span><input type="range" id="pTopRange" min="5" max="50" value="15" oninput="updateUI()"></label>
+        <label>下: <span id="pBottomVal">15</span><input type="range" id="pBottomRange" min="5" max="50" value="15" oninput="updateUI()"></label>
+        <label>左: <span id="pLeftVal">15</span><input type="range" id="pLeftRange" min="5" max="50" value="15" oninput="updateUI()"></label>
+        <label>右: <span id="pRightVal">15</span><input type="range" id="pRightRange" min="5" max="50" value="15" oninput="updateUI()"></label>
     </div>
-
+    
     <hr>
-    <div class="control-item">格子大小: <span id="sizeVal">18</span>mm <input type="range" id="sizeRange" min="10" max="40" value="18" oninput="updateUI()"></div>
-    <div class="control-item">行间距: <span id="rowGapVal">10</span>mm <input type="range" id="rowGapRange" min="0" max="40" value="10" oninput="updateUI()"></div>
+    <label>格子大小: <span id="sizeVal">18</span>mm <input type="range" id="sizeRange" min="10" max="40" value="18" oninput="updateUI()"></label>
+    <label>行距调节: <span id="rowGapVal">10</span>mm <input type="range" id="rowGapRange" min="0" max="40" value="10" oninput="updateUI()"></label>
+    <label>格子类型: 
+        <select id="gridTypeSelect" onchange="updateUI()">
+            <option value="type-mi">虚线米字格</option>
+            <option value="type-tian">虚线田字格</option>
+            <option value="type-box">纯方框</option>
+        </select>
+    </label>
+    <label>格颜色: <input type="color" id="colorPicker" value="#ff0000" oninput="updateUI()"></label>
     
-    <div class="control-item">格子类型: <select id="gridTypeSelect" onchange="updateUI()"><option value="type-mi">米字格</option><option value="type-tian">田字格</option><option value="type-box">纯方框</option></select></div>
-    <div class="control-item">颜色: <input type="color" id="colorPicker" value="#ff0000" style="height:25px" oninput="updateUI()"></div>
-    
-    <button style="margin-top:5px; background:#007bff; color:#fff; border:none; padding:8px; border-radius:4px; cursor:pointer;" onclick="window.print()">确认打印</button>
+    <button style="background:#28a745; color:white;" onclick="window.print()">确认打印 (A4)</button>
 </div>
 
 <div id="content"></div>
@@ -130,20 +134,13 @@
 <script>
     function updateUI() {
         const root = document.documentElement;
-        const configKeys = {
-            'pTop': 'pTopRange', 'pBottom': 'pBottomRange', 
-            'pLeft': 'pLeftRange', 'pRight': 'pRightRange',
-            'size': 'sizeRange', 'rowGap': 'rowGapRange'
-        };
-
-        for (let key in configKeys) {
-            const val = document.getElementById(configKeys[key]).value;
+        const keys = ['pTop', 'pBottom', 'pLeft', 'pRight', 'size', 'rowGap'];
+        keys.forEach(key => {
+            const val = document.getElementById(key + 'Range').value;
             document.getElementById(key + 'Val').innerText = val;
-            // 转换为 CSS 变量名，如 pTop -> --p-top
             const cssVar = '--' + key.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
             root.style.setProperty(cssVar, val + 'mm');
-        }
-
+        });
         root.style.setProperty('--grid-color', document.getElementById('colorPicker').value);
         renderContent();
     }
@@ -152,47 +149,42 @@
         const content = document.getElementById('content');
         const text = document.getElementById('input').value.trim();
         const gridType = document.getElementById('gridTypeSelect').value;
-        const titleText = document.getElementById('titleInput').value;
-
         content.innerHTML = '';
-        let currentPage = createPage(titleText);
+        let currentPage = createPage();
         content.appendChild(currentPage);
         let renderArea = currentPage.querySelector('.render-area');
 
-        const words = text.split(/[,，]/);
-        words.forEach(word => {
-            const trimmedWord = word.trim();
-            if(!trimmedWord) return;
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'word-group';
-            trimmedWord.split(/\s+/).forEach(syl => {
-                const charUnit = document.createElement('div');
-                charUnit.className = 'char-unit';
-                charUnit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge ${gridType}"></div>`;
-                groupDiv.appendChild(charUnit);
+        text.split(/[,，]/).forEach(word => {
+            const trimmed = word.trim();
+            if(!trimmed) return;
+            const group = document.createElement('div');
+            group.className = 'word-group';
+            trimmed.split(/\s+/).forEach(syl => {
+                const unit = document.createElement('div');
+                unit.className = 'char-unit';
+                unit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge ${gridType}"></div>`;
+                group.appendChild(unit);
             });
-            renderArea.appendChild(groupDiv);
+            renderArea.appendChild(group);
             if (renderArea.scrollHeight > renderArea.clientHeight) { 
-                currentPage = createPage(titleText);
+                currentPage = createPage();
                 content.appendChild(currentPage);
                 renderArea = currentPage.querySelector('.render-area');
-                renderArea.appendChild(groupDiv);
+                renderArea.appendChild(group);
             }
         });
     }
 
-    function createPage(title) {
+    function createPage() {
         const page = document.createElement('div');
         page.className = 'page';
         page.innerHTML = `
             <div class="info-bar"><span>姓名：__________</span><span>得分：__________</span></div>
-            <div class="page-title">${title}</div>
             <div class="render-area"></div>
             <div class="page-footer"></div>
         `;
         return page;
     }
-
     updateUI();
 </script>
 </body>
