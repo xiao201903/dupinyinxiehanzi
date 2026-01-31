@@ -1,27 +1,149 @@
 <!doctype html>
-<html>
+<html lang="zh">
 <head>
-  <meta charset="utf-8">
-  <title>词语出题</title>
+<meta charset="utf-8">
+<title>看拼音写词语练习</title>
+
+<style>
+/* 页面大小，专门为打印准备 */
+@page {
+  size: A4;
+  margin: 20mm;
+}
+
+body {
+  font-family: "SimSun", "Noto Serif SC", serif;
+  color: #000;
+}
+
+/* 标题 */
+h1 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+/* 基本信息 */
+.info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+/* 每一行词语 */
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+/* 拼音 */
+.pinyin {
+  width: 160px;
+  font-size: 14px;
+}
+
+/* 田字格容器 */
+.boxes {
+  display: flex;
+  gap: 6px;
+}
+
+/* 单个田字格 */
+.box {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #2e8b57;
+  position: relative;
+}
+
+/* 田字格虚线 */
+.box::before,
+.box::after {
+  content: "";
+  position: absolute;
+  background: #2e8b57;
+}
+
+.box::before {
+  width: 1px;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.box::after {
+  height: 1px;
+  width: 100%;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+}
+
+/* 打印时隐藏网页边距 */
+@media print {
+  body {
+    margin: 0;
+  }
+}
+</style>
 </head>
+
 <body>
 
-<h2>输入词语</h2>
+<h1>看拼音写词语练习</h1>
 
-<input id="word" placeholder="比如：拼音">
-<button onclick="gen()">生成</button>
+<div class="info">
+  <div>姓名：__________</div>
+  <div>班级：__________</div>
+  <div>成绩：__________</div>
+</div>
 
-<pre id="out"></pre>
+<!-- 👇👇👇 下面是题目区域 👇👇👇 -->
 
-<script>
-function gen() {
-  var w = document.getElementById("word").value;
-  if (w === "") return;
+<div class="row">
+  <div class="pinyin">shān shuǐ</div>
+  <div class="boxes">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+</div>
 
-  document.getElementById("out").innerText =
-    "题目：\n请写出「" + w + "」的拼音。";
-}
-</script>
+<div class="row">
+  <div class="pinyin">shǒu xīn</div>
+  <div class="boxes">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="pinyin">fēng yún</div>
+  <div class="boxes">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="pinyin">hé hǎo</div>
+  <div class="boxes">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="pinyin">shǔi tǔ</div>
+  <div class="boxes">
+    <div class="box"></div>
+    <div class="box"></div>
+  </div>
+</div>
+
+<!-- 👆👆👆 题目就按这个格式往下复制 👆👆👆 -->
 
 </body>
 </html>
