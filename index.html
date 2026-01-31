@@ -12,7 +12,7 @@
         .page {
             width: 210mm;
             min-height: 297mm;
-            padding: 15mm;
+            padding: 20mm 15mm;
             margin: 10mm auto;
             background: white;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
@@ -26,15 +26,15 @@
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #333;
+            margin-bottom: 25px;
             padding-bottom: 10px;
+            border-bottom: 2px solid #333;
         }
 
         .render-area {
             display: flex;
             flex-wrap: wrap;
-            gap: 15px 25px; /* 行间距15px，词组间距25px */
+            gap: 20px 35px; /* 行间距20px，词组间距35px */
             align-content: flex-start;
         }
 
@@ -51,24 +51,22 @@
         }
 
         .pinyin {
-            height: 28px;
-            font-size: 18px;
+            height: 30px;
+            font-size: 19px;
             color: #000;
             margin-bottom: 4px;
         }
 
-        /* 米字格：利用多重线性渐变绘制 */
+        /* 米字格样式 */
         .tian-zi-ge {
             width: var(--grid-size);
             height: var(--grid-size);
             border: 2px solid #ff0000;
-            margin-left: -2px; /* 消除相邻边框重叠 */
+            margin-left: -2px; 
             position: relative;
             background-image: 
-                /* 十字中心虚线 */
                 linear-gradient(to right, transparent 49%, #ff0000 50%, transparent 51%),
                 linear-gradient(to bottom, transparent 49%, #ff0000 50%, transparent 51%),
-                /* 米字斜虚线 (淡红色以示区分) */
                 linear-gradient(45deg, transparent 49.5%, rgba(255,0,0,0.2) 50%, transparent 50.5%),
                 linear-gradient(-45deg, transparent 49.5%, rgba(255,0,0,0.2) 50%, transparent 50.5%);
             background-size: 100% 100%;
@@ -78,14 +76,14 @@
 
         /* 左侧悬浮控制栏 */
         .controls {
-            position: fixed; left: 15px; top: 15px; width: 240px;
+            position: fixed; left: 15px; top: 15px; width: 250px;
             background: #fff; padding: 20px; border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100; display: flex; flex-direction: column; gap: 10px;
+            z-index: 100; display: flex; flex-direction: column; gap: 12px;
         }
-        textarea, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
-        button { cursor: pointer; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; }
-        button:hover { background: #0056b3; }
+        textarea, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+        button { cursor: pointer; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; }
+        button:hover { background: #218838; }
 
         @media print {
             .no-print { display: none !important; }
@@ -101,15 +99,16 @@
     
     <input type="text" id="titleInput" placeholder="请输入标题" value="看拼音写汉字练习">
     
-    <label style="font-size: 13px;">输入词语 (空格隔开词，横线隔开字):</label>
-    <textarea id="input" rows="10" placeholder="例如：nǐ-hǎo xìng-fú kāi-xīn">nǐ-hǎo xìng-fú kāi-xīn</textarea>
+    <label style="font-size: 13px; font-weight: bold;">输入规则：</label>
+    <p style="font-size: 12px; color: #666; margin: 0;">词内音节用 <b>空格</b>，词与词用 <b>逗号</b>。<br>示例：nǐ hǎo, xìng fú</p>
+    
+    <textarea id="input" rows="8" placeholder="例如：nǐ hǎo, xìng fú">nǐ hǎo, xìng fú, kāi xīn</textarea>
     
     <label style="font-size: 13px;">格子大小: <span id="sizeVal">80</span>px</label>
     <input type="range" id="sizeRange" min="40" max="150" value="80">
     
-    <button onclick="generate()">同步预览</button>
-    <button onclick="window.print()" style="background: #28a745;">确认打印 (A4)</button>
-    <p style="font-size: 12px; color: #777;">提示：<br>1. 词语间必须有空格。<br>2. 打印时勾选“背景图形”。</p>
+    <button onclick="generate()">同步更新预览</button>
+    <button onclick="window.print()" style="background: #007bff;">确认打印 (A4)</button>
 </div>
 
 <div id="content"></div>
@@ -130,17 +129,18 @@
         content.appendChild(currentPage);
         let renderArea = currentPage.querySelector('.render-area');
 
-        // 使用空格分割词语
-        const words = text.split(/\s+/);
+        // 先按逗号分割“词组”
+        const words = text.split(/[,，]/);
         
         words.forEach(word => {
-            if(!word) return;
+            const trimmedWord = word.trim();
+            if(!trimmedWord) return;
             
             const groupDiv = document.createElement('div');
             groupDiv.className = 'word-group';
             
-            // 使用横线分割音节（字）
-            const syllables = word.split('-');
+            // 再按空格分割词组内的“音节”
+            const syllables = trimmedWord.split(/\s+/);
             syllables.forEach(syl => {
                 const charUnit = document.createElement('div');
                 charUnit.className = 'char-unit';
@@ -150,8 +150,8 @@
             
             renderArea.appendChild(groupDiv);
             
-            // 自动分页检查 (A4 高度约 1120px，扣除内边距)
-            if (renderArea.scrollHeight > 920) { 
+            // A4 分页逻辑
+            if (renderArea.scrollHeight > 900) { 
                 currentPage = createPage(titleText);
                 content.appendChild(currentPage);
                 renderArea = currentPage.querySelector('.render-area');
