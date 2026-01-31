@@ -5,15 +5,17 @@
     <title>精准 A4 拼音字帖生成器</title>
     <style>
         :root {
-            --grid-size: 15mm;
+            --grid-size: 18mm;
             --page-padding: 20mm;
             --row-gap: 10mm;
             --grid-color: #ff0000;
+            --pinyin-font: "Microsoft YaHei";
+            --pinyin-size: 14pt;
+            --pinyin-weight: normal;
         }
         
         body { margin: 0; background: #525659; font-family: sans-serif; }
         
-        /* A4 页面设置 */
         .page {
             width: 210mm;
             min-height: 297mm;
@@ -37,7 +39,7 @@
         .render-area {
             display: flex;
             flex-wrap: wrap;
-            gap: var(--row-gap) 10mm; /* 行距由变量控制，词间距固定10mm */
+            gap: var(--row-gap) 10mm;
             align-content: flex-start;
         }
 
@@ -45,15 +47,18 @@
         .char-unit { display: flex; flex-direction: column; align-items: center; }
 
         .pinyin {
-            height: 8mm;
-            font-size: 14pt;
+            height: 10mm;
+            font-family: var(--pinyin-font);
+            font-size: var(--pinyin-size);
+            font-weight: var(--pinyin-weight);
             color: #000;
             margin-bottom: 1mm;
             display: flex;
             align-items: flex-end;
+            white-space: nowrap;
         }
 
-        /* 米字格绘制 */
+        /* 基础方框 */
         .tian-zi-ge {
             width: var(--grid-size);
             height: var(--grid-size);
@@ -61,41 +66,41 @@
             margin-left: -1.5pt; 
             position: relative;
             box-sizing: border-box;
+            background-size: 100% 100%;
+        }
+
+        /* 田字格辅助线 */
+        .type-tian {
+            background-image: 
+                linear-gradient(to right, transparent 49%, var(--grid-color) 50%, transparent 51%),
+                linear-gradient(to bottom, transparent 49%, var(--grid-color) 50%, transparent 51%);
+        }
+
+        /* 米字格辅助线 */
+        .type-mi {
             background-image: 
                 linear-gradient(to right, transparent 49%, var(--grid-color) 50%, transparent 51%),
                 linear-gradient(to bottom, transparent 49%, var(--grid-color) 50%, transparent 51%),
                 linear-gradient(45deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%),
                 linear-gradient(-45deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%);
-            background-size: 100% 100%;
-            opacity: 0.8;
-        }
-        
-        /* 米字格虚线效果增强 */
-        .tian-zi-ge::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: 
-                linear-gradient(to right, white 2px, transparent 2px),
-                linear-gradient(to bottom, white 2px, transparent 2px);
-            background-size: 5px 5px; /* 这里可以做出虚线感 */
-            pointer-events: none;
-            display: none; /* 如果需要实线则保持隐藏 */
         }
 
+        /* 纯方框（不添加背景图） */
+        .type-box { background-image: none; }
+        
         .char-unit:first-child .tian-zi-ge { margin-left: 0; }
 
-        /* 控制面板样式 */
         .controls {
             position: fixed; left: 10px; top: 10px; width: 280px;
             background: #fff; padding: 15px; border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            z-index: 100; display: flex; flex-direction: column; gap: 10px;
-            max-height: 90vh; overflow-y: auto;
+            z-index: 100; display: flex; flex-direction: column; gap: 8px;
+            max-height: 95vh; overflow-y: auto;
         }
-        .control-item { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
-        textarea, input { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
-        button { cursor: pointer; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 5px; }
+        .control-item { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+        textarea, input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        hr { border: 0; border-top: 1px dashed #ddd; margin: 5px 0; }
+        button { cursor: pointer; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; }
 
         @media print {
             .no-print { display: none !important; }
@@ -107,21 +112,48 @@
 <body>
 
 <div class="controls no-print">
-    <strong style="font-size: 16px;">自定义参数</strong>
+    <strong style="font-size: 16px;">设置面板</strong>
     
     <div class="control-item">
         <label>标题：</label>
-        <input type="text" id="titleInput" value="看拼音写汉字练习">
+        <input type="text" id="titleInput" value="生字临摹练习">
     </div>
 
     <div class="control-item">
-        <label>输入词语 (音节间空格，词间逗号)：</label>
-        <textarea id="input" rows="5">nǐ hǎo, xìng fú, měi lǐ</textarea>
+        <label>输入词语 (音节空格，词间逗号)：</label>
+        <textarea id="input" rows="3">nǐ hǎo, xìng fú</textarea>
+    </div>
+
+    <hr>
+    
+    <div class="control-item">
+        <label><b>格子类型：</b></label>
+        <select id="gridTypeSelect">
+            <option value="type-mi">米字格</option>
+            <option value="type-tian">田字格</option>
+            <option value="type-box">纯方框</option>
+        </select>
     </div>
 
     <div class="control-item">
-        <label>格子大小: <span id="sizeVal">15</span>mm</label>
-        <input type="range" id="sizeRange" min="10" max="40" value="15">
+        <label>格子大小: <span id="sizeVal">18</span>mm</label>
+        <input type="range" id="sizeRange" min="10" max="40" value="18">
+    </div>
+
+    <div class="control-item">
+        <label>格子颜色：</label>
+        <input type="color" id="colorPicker" value="#ff0000">
+    </div>
+
+    <hr>
+
+    <div class="control-item">
+        <label>拼音字体：</label>
+        <select id="fontSelect">
+            <option value="'KaiTi', 'STKaiti'">楷体 (标准)</option>
+            <option value="'Microsoft YaHei'">微软雅黑</option>
+            <option value="'SimHei'">黑体</option>
+        </select>
     </div>
 
     <div class="control-item">
@@ -134,69 +166,57 @@
         <input type="range" id="rowGapRange" min="0" max="50" value="10">
     </div>
 
-    <div class="control-item">
-        <label>线条颜色：</label>
-        <input type="color" id="colorPicker" value="#ff0000">
-    </div>
-
-    <button onclick="generate()">生成字帖</button>
-    <button onclick="window.print()" style="background: #007bff;">确认打印 (A4)</button>
+    <button onclick="generate()">同步更新预览</button>
+    <button onclick="window.print()" style="background: #007bff; margin-top:5px;">确认打印 (A4)</button>
 </div>
 
 <div id="content"></div>
 
 <script>
     function generate() {
-        // 获取所有参数
-        const titleText = document.getElementById('titleInput').value;
-        const text = document.getElementById('input').value.trim();
-        const size = document.getElementById('sizeRange').value;
-        const margin = document.getElementById('marginRange').value;
-        const rowGap = document.getElementById('rowGapRange').value;
-        const color = document.getElementById('colorPicker').value;
-
-        // 更新数值显示
-        document.getElementById('sizeVal').innerText = size;
-        document.getElementById('marginVal').innerText = margin;
-        document.getElementById('rowGapRangeVal').innerText = rowGap;
-
-        // 更新 CSS 变量
         const root = document.documentElement;
-        root.style.setProperty('--grid-size', size + 'mm');
-        root.style.setProperty('--page-padding', margin + 'mm');
-        root.style.setProperty('--row-gap', rowGap + 'mm');
-        root.style.setProperty('--grid-color', color);
+        
+        // 数值反馈
+        document.getElementById('sizeVal').innerText = document.getElementById('sizeRange').value;
+        document.getElementById('marginVal').innerText = document.getElementById('marginRange').value;
+        document.getElementById('rowGapRangeVal').innerText = document.getElementById('rowGapRange').value;
 
+        // 设置全局变量
+        root.style.setProperty('--pinyin-font', document.getElementById('fontSelect').value);
+        root.style.setProperty('--grid-size', document.getElementById('sizeRange').value + 'mm');
+        root.style.setProperty('--page-padding', document.getElementById('marginRange').value + 'mm');
+        root.style.setProperty('--row-gap', document.getElementById('rowGapRange').value + 'mm');
+        root.style.setProperty('--grid-color', document.getElementById('colorPicker').value);
+
+        const gridType = document.getElementById('gridTypeSelect').value;
+        const text = document.getElementById('input').value.trim();
         const content = document.getElementById('content');
         content.innerHTML = '';
         
-        let currentPage = createPage(titleText);
+        let currentPage = createPage(document.getElementById('titleInput').value);
         content.appendChild(currentPage);
         let renderArea = currentPage.querySelector('.render-area');
 
         const words = text.split(/[,，]/);
-        
         words.forEach(word => {
             const trimmedWord = word.trim();
             if(!trimmedWord) return;
             
             const groupDiv = document.createElement('div');
             groupDiv.className = 'word-group';
-            
             const syllables = trimmedWord.split(/\s+/);
             syllables.forEach(syl => {
                 const charUnit = document.createElement('div');
                 charUnit.className = 'char-unit';
-                charUnit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge"></div>`;
+                charUnit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge ${gridType}"></div>`;
                 groupDiv.appendChild(charUnit);
             });
             
             renderArea.appendChild(groupDiv);
             
-            // 简单的溢出检查 (A4 高度减去边距)
-            const maxPageHeight = 297 - (margin * 2) - 30; // 减去标题空间
-            if (renderArea.offsetHeight > (maxPageHeight * 3.78)) { // 3.78是mm到px的粗略转换用于预览判断
-                currentPage = createPage(titleText);
+            // 分页检测
+            if (renderArea.offsetHeight > 1000) { 
+                currentPage = createPage(document.getElementById('titleInput').value);
                 content.appendChild(currentPage);
                 renderArea = currentPage.querySelector('.render-area');
                 renderArea.appendChild(groupDiv);
@@ -211,7 +231,6 @@
         return page;
     }
 
-    // 初始化
     generate();
 </script>
 
