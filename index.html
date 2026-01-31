@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>精准 A4 拼音字帖生成器 Pro</title>
+    <title>实时 A4 拼音字帖生成器</title>
     <style>
         :root {
             --grid-size: 18mm;
@@ -15,8 +15,9 @@
             --pinyin-size: 14pt;
         }
         
-        body { margin: 0; background: #525659; font-family: sans-serif; }
+        body { margin: 0; background: #525659; font-family: sans-serif; counter-reset: pageCounter; }
         
+        /* A4 页面容器 */
         .page {
             width: 210mm;
             min-height: 297mm;
@@ -27,73 +28,83 @@
             box-sizing: border-box;
             display: flex;
             flex-direction: column;
+            position: relative;
             page-break-after: always;
         }
 
-        .page-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10mm;
+        .info-bar {
+            display: flex; justify-content: space-between;
+            font-size: 14px; border-bottom: 1px solid #333;
+            padding-bottom: 5px; margin-bottom: 5mm;
         }
+
+        .page-title { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 8mm; }
 
         .render-area {
-            display: flex;
-            flex-wrap: wrap;
+            display: flex; flex-wrap: wrap;
             gap: var(--row-gap) var(--word-gap);
-            align-content: flex-start;
+            align-content: flex-start; flex-grow: 1;
         }
 
-        /* 词语组内部布局 */
-        .word-group { 
-            display: flex; 
-            break-inside: avoid; 
-            gap: var(--char-gap); 
+        .page-footer {
+            position: absolute; bottom: 10mm; left: 0; right: 0;
+            text-align: center; font-size: 12px; color: #666;
         }
+        .page-footer::after { counter-increment: pageCounter; content: "第 " counter(pageCounter) " 页"; }
 
+        .word-group { display: flex; break-inside: avoid; gap: var(--char-gap); }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
 
         .pinyin {
-            height: 10mm;
-            font-family: var(--pinyin-font);
-            font-size: var(--pinyin-size);
-            color: #000;
-            margin-bottom: 1mm;
-            display: flex;
-            align-items: flex-end;
-            white-space: nowrap;
+            height: 10mm; font-family: var(--pinyin-font);
+            font-size: var(--pinyin-size); color: #000;
+            margin-bottom: 1mm; display: flex; align-items: flex-end;
         }
 
+        /* 田字格主体：外框实线 */
         .tian-zi-ge {
             width: var(--grid-size);
             height: var(--grid-size);
             border: 1.5pt solid var(--grid-color);
             position: relative;
             box-sizing: border-box;
+        }
+
+        /* 虚线背景通用设置 */
+        .type-tian, .type-mi {
+            background-position: center;
             background-size: 100% 100%;
         }
 
-        /* 格子类型样式 */
+        /* 田字格：十字虚线 */
         .type-tian {
             background-image: 
-                linear-gradient(to right, transparent 49%, var(--grid-color) 50%, transparent 51%),
-                linear-gradient(to bottom, transparent 49%, var(--grid-color) 50%, transparent 51%);
+                linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+            background-image: 
+                repeating-linear-gradient(to right, var(--grid-color), var(--grid-color) 2px, transparent 2px, transparent 4px),
+                repeating-linear-gradient(to bottom, var(--grid-color), var(--grid-color) 2px, transparent 2px, transparent 4px);
+            background-position: 50% 0, 0 50%;
+            background-size: 100% 1px, 1px 100%;
+            background-repeat: no-repeat;
         }
 
+        /* 米字格：十字虚线 + 对角虚线 */
         .type-mi {
             background-image: 
-                linear-gradient(to right, transparent 49%, var(--grid-color) 50%, transparent 51%),
-                linear-gradient(to bottom, transparent 49%, var(--grid-color) 50%, transparent 51%),
-                linear-gradient(45deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%),
-                linear-gradient(-45deg, transparent 49.5%, var(--grid-color) 50%, transparent 50.5%);
+                repeating-linear-gradient(to right, var(--grid-color), var(--grid-color) 2px, transparent 2px, transparent 4px),
+                repeating-linear-gradient(to bottom, var(--grid-color), var(--grid-color) 2px, transparent 2px, transparent 4px),
+                repeating-linear-gradient(45deg, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 3px),
+                repeating-linear-gradient(-45deg, var(--grid-color), var(--grid-color) 1px, transparent 1px, transparent 3px);
+            background-position: 50% 0, 0 50%, 0 0, 0 0;
+            background-size: 100% 1px, 1px 100%, 100% 100%, 100% 100%;
+            background-repeat: no-repeat;
         }
 
-        .type-box { background-image: none; }
-
-        /* 当字间距为0时，合并边框避免变粗 */
         .no-char-gap .tian-zi-ge { margin-left: -1.5pt; }
         .no-char-gap .char-unit:first-child .tian-zi-ge { margin-left: 0; }
 
+        /* 左侧控制台 */
         .controls {
             position: fixed; left: 10px; top: 10px; width: 280px;
             background: #fff; padding: 15px; border-radius: 8px;
@@ -101,10 +112,11 @@
             z-index: 100; display: flex; flex-direction: column; gap: 8px;
             max-height: 95vh; overflow-y: auto;
         }
-        .control-item { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
-        textarea, input, select { padding: 6px; border: 1px solid #ccc; border-radius: 4px; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 5px 0; }
-        button { cursor: pointer; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; font-weight: bold; }
+        .control-item { display: flex; flex-direction: column; gap: 2px; font-size: 12px; }
+        textarea, input, select { padding: 5px; border: 1px solid #ccc; border-radius: 4px; }
+        hr { border: 0; border-top: 1px solid #eee; margin: 4px 0; }
+        
+        .print-btn { cursor: pointer; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; font-weight: bold; margin-top: 5px; }
 
         @media print {
             .no-print { display: none !important; }
@@ -115,83 +127,92 @@
 </head>
 <body>
 
-<div class="controls no-print">
-    <strong style="font-size: 16px;">设置面板</strong>
+<div class="controls no-print" id="ui-panel">
+    <strong style="font-size: 16px;">实时设置面板</strong>
     <div class="control-item">
         <label>标题：</label>
-        <input type="text" id="titleInput" value="看拼音写汉字">
+        <input type="text" id="titleInput" value="看拼音写汉字" oninput="updateUI()">
     </div>
     <div class="control-item">
-        <label>输入 (音节空格，词间逗号)：</label>
-        <textarea id="input" rows="3">nǐ hǎo, xìng fú</textarea>
+        <label>内容 (音节空格，词间逗号)：</label>
+        <textarea id="input" rows="3" oninput="updateUI()">nǐ hǎo, xìng fú, kāi xīn</textarea>
     </div>
 
     <hr>
     <div class="control-item">
         <label>格子类型：</label>
-        <select id="gridTypeSelect">
-            <option value="type-mi">米字格</option>
-            <option value="type-tian">田字格</option>
+        <select id="gridTypeSelect" onchange="updateUI()">
+            <option value="type-mi">虚线米字格</option>
+            <option value="type-tian">虚线田字格</option>
             <option value="type-box">纯方框</option>
         </select>
     </div>
-
     <div class="control-item">
         <label>格子大小: <span id="sizeVal">18</span>mm</label>
-        <input type="range" id="sizeRange" min="10" max="40" value="18">
+        <input type="range" id="sizeRange" min="10" max="40" value="18" oninput="updateUI()">
     </div>
-
     <div class="control-item">
         <label>格子颜色：</label>
-        <input type="color" id="colorPicker" value="#ff0000">
+        <input type="color" id="colorPicker" value="#ff0000" oninput="updateUI()">
     </div>
 
     <hr>
     <div class="control-item">
-        <label>页边距: <span id="marginVal">20</span>mm</label>
-        <input type="range" id="marginRange" min="5" max="50" value="20">
+        <label>字间距: <span id="charGapVal">0</span>mm</label>
+        <input type="range" id="charGapRange" min="0" max="15" value="0" oninput="updateUI()">
     </div>
-
-    <div class="control-item">
-        <label>行间距: <span id="rowGapVal">10</span>mm</label>
-        <input type="range" id="rowGapRange" min="0" max="50" value="10">
-    </div>
-
     <div class="control-item">
         <label>词间距: <span id="wordGapVal">10</span>mm</label>
-        <input type="range" id="wordGapRange" min="0" max="50" value="10">
+        <input type="range" id="wordGapRange" min="0" max="40" value="10" oninput="updateUI()">
     </div>
-
     <div class="control-item">
-        <label>字间距: <span id="charGapVal">0</span>mm</label>
-        <input type="range" id="charGapRange" min="0" max="20" value="0">
+        <label>行间距: <span id="rowGapVal">10</span>mm</label>
+        <input type="range" id="rowGapRange" min="0" max="40" value="10" oninput="updateUI()">
+    </div>
+    <div class="control-item">
+        <label>页边距: <span id="marginVal">20</span>mm</label>
+        <input type="range" id="marginRange" min="5" max="40" value="20" oninput="updateUI()">
     </div>
 
-    <button onclick="generate()">同步更新预览</button>
-    <button onclick="window.print()" style="background: #007bff; margin-top:5px;">确认打印 (A4)</button>
+    <button class="print-btn" onclick="window.print()">确认打印 (A4)</button>
 </div>
 
 <div id="content"></div>
 
 <script>
-    function generate() {
+    function updateUI() {
         const root = document.documentElement;
-        const vals = ['size', 'margin', 'rowGap', 'wordGap', 'charGap'];
-        vals.forEach(v => {
-            const val = document.getElementById(v + 'Range').value;
-            document.getElementById(v + 'Val').innerText = val;
-            root.style.setProperty('--' + v.replace(/[A-Z]/g, m => '-' + m.toLowerCase()), val + 'mm');
-        });
+        
+        // 1. 同步 CSS 变量
+        const configs = {
+            'size': 'sizeRange',
+            'margin': 'marginRange',
+            'rowGap': 'rowGapRange',
+            'wordGap': 'wordGapRange',
+            'charGap': 'charGapRange'
+        };
+
+        for (let key in configs) {
+            const val = document.getElementById(configs[key]).value;
+            document.getElementById(key + 'Val').innerText = val;
+            root.style.setProperty('--' + key.replace(/[A-Z]/g, m => '-' + m.toLowerCase()), val + 'mm');
+        }
 
         root.style.setProperty('--grid-color', document.getElementById('colorPicker').value);
-        
+
+        // 2. 重新生成 DOM 内容
+        renderContent();
+    }
+
+    function renderContent() {
         const gridType = document.getElementById('gridTypeSelect').value;
         const charGapVal = parseInt(document.getElementById('charGapRange').value);
         const text = document.getElementById('input').value.trim();
         const content = document.getElementById('content');
-        content.innerHTML = '';
+        const titleText = document.getElementById('titleInput').value;
         
-        let currentPage = createPage(document.getElementById('titleInput').value);
+        content.innerHTML = '';
+        let currentPage = createPage(titleText);
         content.appendChild(currentPage);
         let renderArea = currentPage.querySelector('.render-area');
 
@@ -201,11 +222,9 @@
             if(!trimmedWord) return;
             
             const groupDiv = document.createElement('div');
-            // 如果字间距为0，添加特殊类处理边框重叠
             groupDiv.className = 'word-group' + (charGapVal === 0 ? ' no-char-gap' : '');
             
-            const syllables = trimmedWord.split(/\s+/);
-            syllables.forEach(syl => {
+            trimmedWord.split(/\s+/).forEach(syl => {
                 const charUnit = document.createElement('div');
                 charUnit.className = 'char-unit';
                 charUnit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge ${gridType}"></div>`;
@@ -214,9 +233,9 @@
             
             renderArea.appendChild(groupDiv);
             
-            // 溢出换页检测
-            if (renderArea.offsetHeight > 1000) { 
-                currentPage = createPage(document.getElementById('titleInput').value);
+            // 实时检查高度，自动分页
+            if (renderArea.scrollHeight > renderArea.clientHeight + 2) { 
+                currentPage = createPage(titleText);
                 content.appendChild(currentPage);
                 renderArea = currentPage.querySelector('.render-area');
                 renderArea.appendChild(groupDiv);
@@ -227,11 +246,21 @@
     function createPage(title) {
         const page = document.createElement('div');
         page.className = 'page';
-        page.innerHTML = `<div class="page-title">${title}</div><div class="render-area"></div>`;
+        page.innerHTML = `
+            <div class="info-bar">
+                <span>姓名：__________</span>
+                <span>日期：202_年__月__日</span>
+                <span>得分：__________</span>
+            </div>
+            <div class="page-title">${title}</div>
+            <div class="render-area"></div>
+            <div class="page-footer"></div>
+        `;
         return page;
     }
 
-    generate();
+    // 初始化加载
+    updateUI();
 </script>
 
 </body>
