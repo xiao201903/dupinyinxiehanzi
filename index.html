@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>词语出题</title>
+</head>
+<body>
+
+<h2>输入词语</h2>
+
+<input id="word" placeholder="比如：拼音">
+<button onclick="gen()">生成</button>
+
+<pre id="out"></pre>
+
+<script>
+function gen() {
+  var w = document.getElementById("word").value;
+  if (w === "") return;
+
+  document.getElementById("out").innerText =
+    "题目：\n请写出「" + w + "」的拼音。";
+}
+</script>
+
+</body>
+</html>
