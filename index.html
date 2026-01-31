@@ -2,34 +2,46 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>拼音田字格生成器</title>
+    <title>看拼音写汉字生成器</title>
     <style>
-        /* 打印基础设置 */
-        :root {
-            --grid-size: 80px; /* 初始田字格大小，可调整 */
-        }
+        :root { --grid-size: 80px; }
         
-        body { margin: 0; background: #f0f0f0; font-family: sans-serif; }
+        /* 页面基础设置 */
+        body { margin: 0; background: #525659; font-family: "Microsoft YaHei", sans-serif; }
         
-        /* 页面容器 */
         .page {
             width: 210mm;
             min-height: 297mm;
-            padding: 20mm;
+            padding: 20mm 15mm;
             margin: 10mm auto;
             background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
             box-sizing: border-box;
+            position: relative;
+            page-break-after: always;
+        }
+
+        /* 标题样式 */
+        .page-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        /* 词语容器：自动换行 */
+        .render-area {
             display: flex;
             flex-wrap: wrap;
+            gap: 20px 30px; /* 行间距20px，词间距30px */
             align-content: flex-start;
         }
 
-        /* 单词组容器 */
+        /* 词语组：格子并在一起 */
         .word-group {
             display: flex;
-            margin-bottom: 20px;
-            margin-right: 15px;
+            break-inside: avoid;
         }
 
         /* 单个汉字单元 */
@@ -42,100 +54,126 @@
         .pinyin {
             height: 30px;
             font-size: 18px;
-            color: #666;
-            margin-bottom: 5px;
+            color: #333;
+            margin-bottom: 2px;
         }
 
-        /* 田字格绘制 */
+        /* 田字格样式 - 红色实线边框，虚线中线 */
         .tian-zi-ge {
             width: var(--grid-size);
             height: var(--grid-size);
             border: 2px solid #ff0000;
+            margin-left: -2px; /* 让相邻的格子边框重叠 */
             position: relative;
             background-image: 
                 linear-gradient(to right, transparent 49%, #ff0000 50%, transparent 51%),
                 linear-gradient(to bottom, transparent 49%, #ff0000 50%, transparent 51%);
             background-size: 100% 100%;
-            /* 虚线效果 */
-            background-image: 
-                linear-gradient(to right, transparent 49.5%, #ff0000 50%, transparent 50.5%),
-                linear-gradient(to bottom, transparent 49.5%, #ff0000 50%, transparent 50.5%);
-            /* 加上边线和对角线可在此扩展 */
         }
+        
+        .char-unit:first-child .tian-zi-ge { margin-left: 0; }
 
-        /* 打印时的样式调整 */
-        @media print {
-            body { background: none; }
-            .page { margin: 0; box-shadow: none; }
-            .no-print { display: none; }
-        }
-
-        /* 控制面板 */
+        /* 左侧控制台 */
         .controls {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            position: fixed; left: 20px; top: 20px; width: 260px;
+            background: #fff; padding: 20px; border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 100; display: flex; flex-direction: column; gap: 12px;
+        }
+        textarea, input[type="text"] { padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { cursor: pointer; padding: 10px; background: #28a745; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #218838; }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .page { margin: 0; box-shadow: none; width: 210mm; }
         }
     </style>
 </head>
 <body>
 
 <div class="controls no-print">
-    <label>输入词语 (空格隔开):</label>
-    <textarea id="input" rows="5">pīnyīn xuéxí</textarea>
-    <label>格子大小 (px):</label>
+    <h3 style="margin:0">生成器设置</h3>
+    
+    <label>标题：</label>
+    <input type="text" id="titleInput" placeholder="例如：一年级生字表" value="看拼音写汉字">
+    
+    <label>词语输入 (用逗号隔开词语)：</label>
+    <textarea id="input" rows="8" placeholder="例如：nǐ-hǎo, pēng-yǒu, xué-xí">nǐ-hǎo, pēng-yǒu, xué-xí</textarea>
+    
+    <label>格子大小: <span id="sizeVal">80</span>px</label>
     <input type="range" id="sizeRange" min="40" max="120" value="80">
-    <button onclick="generate()">生成页面</button>
-    <button onclick="window.print()">打印预览</button>
+    
+    <button onclick="generate()">同步更新预览</button>
+    <button onclick="window.print()" style="background: #007bff;">确认打印 (A4)</button>
+    <p style="font-size: 12px; color: #666;">* 注：音节之间用短横线“-”连接，词语之间用逗号“,”连接。</p>
 </div>
 
-<div class="page" id="renderArea">
+<div id="content">
     </div>
 
 <script>
     function generate() {
-        const text = document.getElementById('input').value;
+        const titleText = document.getElementById('titleInput').value;
+        const text = document.getElementById('input').value.trim();
         const size = document.getElementById('sizeRange').value;
-        const container = document.getElementById('renderArea');
         
-        // 更新 CSS 变量
+        document.getElementById('sizeVal').innerText = size;
         document.documentElement.style.setProperty('--grid-size', size + 'px');
         
-        container.innerHTML = '';
+        const content = document.getElementById('content');
+        content.innerHTML = '';
         
-        const groups = text.split(/\s+/);
-        groups.forEach(group => {
-            if(!group) return;
+        // 创建第一页
+        let currentPage = createPage(titleText);
+        content.appendChild(currentPage);
+        let renderArea = currentPage.querySelector('.render-area');
+
+        // 使用逗号（中英文均可）分割词语
+        const words = text.split(/[,，]/);
+        
+        words.forEach(word => {
+            if(!word.trim()) return;
             
             const groupDiv = document.createElement('div');
             groupDiv.className = 'word-group';
             
-            // 假设输入的拼音用“-”分隔音节，或者简单的逻辑
-            // 这里我们演示简单的：每个字母占一个格子的简化版，
-            // 实际上你可能需要输入类似 "pīn-yīn" 这样的格式
-            const syllables = group.split('-'); 
-            
+            // 使用横线分割音节
+            const syllables = word.trim().split('-');
             syllables.forEach(syl => {
                 const charUnit = document.createElement('div');
                 charUnit.className = 'char-unit';
-                charUnit.innerHTML = `
-                    <div class="pinyin">${syl}</div>
-                    <div class="tian-zi-ge"></div>
-                `;
+                charUnit.innerHTML = `<div class="pinyin">${syl}</div><div class="tian-zi-ge"></div>`;
                 groupDiv.appendChild(charUnit);
             });
             
-            container.appendChild(groupDiv);
+            renderArea.appendChild(groupDiv);
+            
+            // 检测是否需要自动分页 (A4大致高度参考值)
+            if (renderArea.scrollHeight > 900) { 
+                currentPage = createPage(titleText);
+                content.appendChild(currentPage);
+                renderArea = currentPage.querySelector('.render-area');
+                renderArea.appendChild(groupDiv); // 把刚才溢出的词语移动到新页
+            }
         });
     }
 
-    // 初始化
+    function createPage(title) {
+        const page = document.createElement('div');
+        page.className = 'page';
+        page.innerHTML = `
+            <div class="page-title">${title}</div>
+            <div class="render-area"></div>
+        `;
+        return page;
+    }
+
+    // 绑定滑动条实时更新
+    document.getElementById('sizeRange').oninput = generate;
+    
+    // 初始化执行一次
     generate();
 </script>
 
