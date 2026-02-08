@@ -1,472 +1,235 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>看拼音写词语练习生成工具</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: "Microsoft YaHei", sans-serif;
-        }
-        body {
-            background: #f5f7fa;
-            padding: 20px;
-        }
-        .container {
-            display: flex;
-            gap: 25px;
-            max-width: 1600px;
-            margin: 0 auto;
-        }
-        /* 左侧控制面板 */
-        .left-panel {
-            width: 380px;
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-            height: fit-content;
-        }
-        .panel-group {
-            margin-bottom: 22px;
-        }
-        .panel-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .panel-title::before {
-            content: "H";
-            color: #4294ff;
-            font-weight: bold;
-        }
-        .input-label {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 6px;
-            display: block;
-        }
-        .title-input {
-            width: 100%;
-            height: 38px;
-            border: 1px solid #e5e6eb;
-            border-radius: 6px;
-            padding: 0 10px;
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-        .slider-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-        input[type="range"] {
-            width: 100%;
-            accent-color: #4294ff;
-        }
-        textarea {
-            width: 100%;
-            height: 220px;
-            border: 1px solid #e5e6eb;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 14px;
-            resize: vertical;
-            line-height: 1.5;
-        }
-        .textarea-footer {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #999;
-            margin-top: 6px;
-        }
-        .clear-btn {
-            color: #4294ff;
-            cursor: pointer;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 14px;
-            color: #555;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .radio-group {
-            display: flex;
-            gap: 15px;
-            font-size: 14px;
-            color: #555;
-            margin: 6px 0;
-        }
-        .gap-sliders {
-            margin-top: 10px;
-        }
-        .slider-item {
-            margin-bottom: 12px;
-        }
+<meta charset="UTF-8">
+<title>看拼音写词语练习生成工具</title>
 
-        /* 右侧预览区 */
-        .right-panel {
-            flex: 1;
-            background: #fff;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-        .preview-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .preview-title {
-            font-size: 16px;
-            font-weight: 600;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .preview-title::before {
-            content: "👁";
-            font-size: 14px;
-        }
-        .preview-toolbar {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .export-btn {
-            background: #ff7d00;
-            color: #fff;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-        .preview-box {
-            border: 1px solid #e5e6eb;
-            border-radius: 8px;
-            padding: 30px;
-            min-height: 800px;
-            background: #fff;
-        }
-        .sheet-title {
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        .sheet-info {
-            display: flex;
-            gap: 40px;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-        .word-list {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-        .word-row {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .word-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .pinyin {
-            font-size: 26px;
-            letter-spacing: 2px;
-            margin-bottom: 4px;
-            height: 32px;
-        }
-        .tianzige {
-            width: 80px;
-            height: 80px;
-            border: 2px solid #333;
-            position: relative;
-        }
-        .tianzige::before {
-            content: "";
-            position: absolute;
-            left: 50%;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: #ccc;
-            transform: translateX(-50%);
-        }
-        .tianzige::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: #ccc;
-            transform: translateY(-50%);
-        }
-    </style>
+<!-- 自动拼音库 -->
+<script src="https://unpkg.com/pinyin-pro"></script>
+
+<style>
+:root{
+  --cellSize:50px;
+  --gap:10px;
+  --rowGap:20px;
+  --pinyinSize:14px;
+}
+body{
+  margin:0;
+  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#eef2f7;
+}
+.app{
+  display:flex;
+  height:100vh;
+}
+.sidebar{
+  width:340px;
+  background:#fff;
+  padding:16px;
+  border-right:1px solid #ddd;
+  overflow:auto;
+}
+.header{
+  font-weight:bold;
+  color:#2b6cb0;
+  margin-bottom:10px;
+}
+.block{
+  border:1px solid #e5e7eb;
+  border-radius:6px;
+  padding:12px;
+  margin-bottom:14px;
+}
+.block h3{
+  font-size:14px;
+  margin:0 0 8px;
+}
+input,textarea{
+  width:100%;
+  box-sizing:border-box;
+  padding:6px;
+  font-size:14px;
+}
+textarea{height:140px;}
+.row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:13px;
+  margin:6px 0;
+}
+input[type=range]{flex:1;}
+.count{
+  text-align:right;
+  font-size:12px;
+  color:#666;
+}
+.preview{
+  flex:1;
+  background:#f8fafc;
+  padding:10px;
+  overflow:auto;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.page{
+  width:210mm;
+  min-height:297mm;
+  background:#fff;
+  margin:auto;
+  padding:15mm;
+  box-sizing:border-box;
+}
+.title{
+  text-align:center;
+  font-weight:bold;
+}
+.info{
+  display:flex;
+  justify-content:space-between;
+  margin:10px 0 20px;
+  font-size:14px;
+}
+.words{
+  display:flex;
+  flex-wrap:wrap;
+  gap:var(--rowGap) var(--gap);
+}
+.word{text-align:center;}
+.pinyin{
+  font-size:var(--pinyinSize);
+  margin-bottom:4px;
+}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(var(--charCount),var(--cellSize));
+}
+.cell{
+  width:var(--cellSize);
+  height:var(--cellSize);
+  border:1px solid #000;
+  position:relative;
+}
+.cell::before,
+.cell::after{
+  content:"";
+  position:absolute;
+  border:1px dashed #ccc;
+}
+.cell::before{left:50%;top:0;height:100%;}
+.cell::after{top:50%;left:0;width:100%;}
+
+button{
+  background:#ff8c00;
+  border:none;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:4px;
+  cursor:pointer;
+}
+
+@media print{
+  body{background:none;}
+  .sidebar,.topbar{display:none;}
+  .preview{padding:0;}
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <!-- 左侧设置面板 -->
-        <div class="left-panel">
-            <!-- 标题设置 -->
-            <div class="panel-group">
-                <div class="panel-title">标题设置</div>
-                <label class="input-label">练习标题</label>
-                <input type="text" class="title-input" id="sheetTitle" value="汉字拼音练习">
-                <label class="input-label">标题大小</label>
-                <input type="range" min="16" max="40" value="24" id="titleSize">
-                <div class="slider-row">
-                    <span>小</span>
-                    <span>24px</span>
-                    <span>大</span>
-                </div>
-            </div>
+<div class="app">
 
-            <!-- 词语录入 -->
-            <div class="panel-group">
-                <div class="panel-title">词语录入</div>
-                <textarea id="wordInput" placeholder="请输入词语（每行一个）">
-你好
-这是
-早上
-你好
-早上
-你好
-早上
-你好
-早上
-你好
-早上</textarea>
-                <div class="textarea-footer">
-                    <span id="wordCount">49个词语</span>
-                    <span class="clear-btn" onclick="clearWords()">清空</span>
-                </div>
-            </div>
+  <!-- 左侧 -->
+  <div class="sidebar">
+    <div class="header">📘 看拼音写词语练习生成工具</div>
 
-            <!-- 格式设置 -->
-            <div class="panel-group">
-                <div class="panel-title">格式设置</div>
-                <label class="input-label">格线类型</label>
-                <div class="radio-group">
-                    <div class="checkbox-item">
-                        <input type="radio" name="gridType" checked>
-                        <span>田字格</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="radio" name="gridType">
-                        <span>米字格</span>
-                    </div>
-                </div>
-
-                <label class="input-label" style="margin-top:10px">表头设置</label>
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>第一栏 班级</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>第二栏 姓名</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>第三栏 得分</span>
-                    </div>
-                </div>
-
-                <label class="input-label" style="margin-top:10px">字中间线条</label>
-                <div class="radio-group">
-                    <div class="checkbox-item">
-                        <input type="radio" name="lineType">
-                        <span>实线</span>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="radio" name="lineType" checked>
-                        <span>虚线</span>
-                    </div>
-                </div>
-
-                <div class="gap-sliders">
-                    <div class="slider-item">
-                        <label class="input-label">格子大小</label>
-                        <input type="range" min="50" max="120" value="80">
-                        <div class="slider-row">
-                            <span>小</span>
-                            <span>60px</span>
-                            <span>大</span>
-                        </div>
-                    </div>
-                    <div class="slider-item">
-                        <label class="input-label">格子间距</label>
-                        <input type="range" min="0" max="40" value="20">
-                        <div class="slider-row">
-                            <span>0px</span>
-                            <span>20px</span>
-                        </div>
-                    </div>
-                    <div class="slider-item">
-                        <label class="input-label">行距</label>
-                        <input type="range" min="10" max="40" value="18">
-                        <div class="slider-row">
-                            <span>小</span>
-                            <span>18px</span>
-                            <span>大</span>
-                        </div>
-                    </div>
-                    <div class="slider-item">
-                        <label class="input-label">词语间距</label>
-                        <input type="range" min="5" max="40" value="21">
-                        <div class="slider-row">
-                            <span>5px</span>
-                            <span>21px</span>
-                            <span>30px</span>
-                        </div>
-                    </div>
-                    <div class="slider-item">
-                        <label class="input-label">拼音字体大小</label>
-                        <input type="range" min="12" max="50" value="26">
-                        <div class="slider-row">
-                            <span>8px</span>
-                            <span>26px</span>
-                            <span>40px</span>
-                        </div>
-                    </div>
-                    <div class="slider-item">
-                        <label class="input-label">汉字字体大小</label>
-                        <input type="range" min="12" max="60" value="36">
-                        <div class="slider-row">
-                            <span>10px</span>
-                            <span>36px</span>
-                            <span>100px</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 右侧预览面板 -->
-        <div class="right-panel">
-            <div class="preview-header">
-                <div class="preview-title">预览效果</div>
-                <div class="preview-toolbar">
-                    <div class="checkbox-item">
-                        <input type="checkbox" checked>
-                        <span>多页显示标题</span>
-                    </div>
-                    <button class="export-btn">导出PDF</button>
-                </div>
-            </div>
-            <div class="preview-box" id="previewBox">
-                <div class="sheet-title" id="showTitle">汉字拼音练习</div>
-                <div class="sheet-info">
-                    <span>班级: _______</span>
-                    <span>姓名: _______</span>
-                    <span>得分: _______</span>
-                </div>
-                <div class="word-list" id="wordList">
-                    <!-- 词语自动生成在这里 -->
-                </div>
-            </div>
-        </div>
+    <div class="block">
+      <h3>标题设置</h3>
+      <input id="titleInput" value="汉字拼音练习">
+      <div class="row">
+        标题大小
+        <input type="range" min="18" max="36" value="24" id="titleSize">
+        <span id="titlePx">24px</span>
+      </div>
     </div>
 
-    <script>
-        // 拼音映射表（基础常用词，可自行扩充）
-        const pinyinMap = {
-            "你好": "nǐ hǎo",
-            "这是": "zhè shì",
-            "早上": "zǎo shàng",
-            "我": "wǒ",
-            "爱": "ài",
-            "学": "xué",
-            "习": "xí"
-        }
+    <div class="block">
+      <h3>词语录入（直接输入汉字）</h3>
+      <textarea id="wordsInput">你好
+这是
+早上好</textarea>
+      <div class="count" id="count"></div>
+    </div>
 
-        // 初始化渲染
-        window.onload = function() {
-            renderWords();
-            countWords();
-        }
+    <div class="block">
+      <h3>格式设置</h3>
+      <div class="row">每词字数 <input type="number" id="charCount" value="2"></div>
+      <div class="row">格子大小 <input type="range" min="40" max="80" value="50" id="cellSize"></div>
+      <div class="row">拼音大小 <input type="range" min="10" max="24" value="14" id="pinyinSize"></div>
+    </div>
+  </div>
 
-        // 清空词语
-        function clearWords() {
-            document.getElementById('wordInput').value = '';
-            renderWords();
-            countWords();
-        }
+  <!-- 右侧 -->
+  <div class="preview">
+    <div class="topbar">
+      <strong>👀 预览效果</strong>
+      <button onclick="window.print()">导出 PDF</button>
+    </div>
 
-        // 统计词语数量
-        function countWords() {
-            let val = document.getElementById('wordInput').value.trim();
-            let arr = val ? val.split('\n').filter(i=>i.trim()) : [];
-            document.getElementById('wordCount').innerText = arr.length + '个词语';
-        }
+    <div class="page">
+      <div class="title" id="title">汉字拼音练习</div>
 
-        // 渲染词语+拼音+田字格
-        function renderWords() {
-            let val = document.getElementById('wordInput').value.trim();
-            let arr = val ? val.split('\n').filter(i=>i.trim()) : [];
-            let list = document.getElementById('wordList');
-            list.innerHTML = '';
+      <div class="info">
+        <div>班级：______</div>
+        <div>姓名：______</div>
+        <div>得分：______</div>
+      </div>
 
-            let row = document.createElement('div');
-            row.className = 'word-row';
-            list.appendChild(row);
+      <div class="words" id="words"></div>
+    </div>
+  </div>
+</div>
 
-            arr.forEach((word, idx) => {
-                word = word.trim();
-                if(!word) return;
-                let py = pinyinMap[word] || word;
-                
-                // 换行（每行4个）
-                if(idx > 0 && idx % 4 === 0) {
-                    row = document.createElement('div');
-                    row.className = 'word-row';
-                    list.appendChild(row);
-                }
+<script>
+function render(){
+  const text=document.getElementById("wordsInput").value.trim();
+  const list=text?text.split("\n"):[];
+  document.getElementById("count").innerText=`共 ${list.length} 个词语`;
 
-                let item = `
-                <div class="word-item">
-                    <div class="pinyin">${py}</div>
-                    <div class="tianzige"></div>
-                </div>`;
-                row.innerHTML += item;
-            });
-        }
+  document.getElementById("title").innerText=document.getElementById("titleInput").value;
+  const tsize=document.getElementById("titleSize").value;
+  document.getElementById("title").style.fontSize=tsize+"px";
+  document.getElementById("titlePx").innerText=tsize+"px";
 
-        // 监听输入变化实时刷新
-        document.getElementById('wordInput').addEventListener('input', () => {
-            renderWords();
-            countWords();
-        });
-        document.getElementById('sheetTitle').addEventListener('input', () => {
-            document.getElementById('showTitle').innerText = document.getElementById('sheetTitle').value;
-        });
-    </script>
+  document.documentElement.style.setProperty("--cellSize",document.getElementById("cellSize").value+"px");
+  document.documentElement.style.setProperty("--pinyinSize",document.getElementById("pinyinSize").value+"px");
+  document.documentElement.style.setProperty("--charCount",document.getElementById("charCount").value);
+
+  const box=document.getElementById("words");
+  box.innerHTML="";
+
+  list.forEach(word=>{
+    const py=pinyinPro.pinyin(word,{toneType:"symbol",type:"array"}).join(" ");
+    const div=document.createElement("div");
+    div.className="word";
+    div.innerHTML=`
+      <div class="pinyin">${py}</div>
+      <div class="grid">
+        ${"<div class='cell'></div>".repeat(document.getElementById("charCount").value)}
+      </div>`;
+    box.appendChild(div);
+  });
+}
+
+document.querySelectorAll("input,textarea").forEach(e=>{
+  e.addEventListener("input",render);
+});
+render();
+</script>
 </body>
 </html>
