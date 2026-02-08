@@ -3,140 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <title>看拼音写词语练习生成工具</title>
-
-<!-- 自动拼音库 -->
 <script src="https://unpkg.com/pinyin-pro"></script>
 
 <style>
 :root{
-  --cellSize:50px;
+  --cell:50px;
   --gap:10px;
   --rowGap:20px;
-  --pinyinSize:14px;
+  --pinyin:14px;
 }
-body{
-  margin:0;
-  font-family:"PingFang SC","Microsoft YaHei",sans-serif;
-  background:#eef2f7;
-}
-.app{
-  display:flex;
-  height:100vh;
-}
-.sidebar{
-  width:340px;
-  background:#fff;
-  padding:16px;
-  border-right:1px solid #ddd;
-  overflow:auto;
-}
-.header{
-  font-weight:bold;
-  color:#2b6cb0;
-  margin-bottom:10px;
-}
-.block{
-  border:1px solid #e5e7eb;
-  border-radius:6px;
-  padding:12px;
-  margin-bottom:14px;
-}
-.block h3{
-  font-size:14px;
-  margin:0 0 8px;
-}
-input,textarea{
-  width:100%;
-  box-sizing:border-box;
-  padding:6px;
-  font-size:14px;
-}
-textarea{height:140px;}
-.row{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  font-size:13px;
-  margin:6px 0;
-}
-input[type=range]{flex:1;}
-.count{
-  text-align:right;
-  font-size:12px;
-  color:#666;
-}
-.preview{
-  flex:1;
-  background:#f8fafc;
-  padding:10px;
-  overflow:auto;
-}
-.topbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:10px;
-}
-.page{
-  width:210mm;
-  min-height:297mm;
-  background:#fff;
-  margin:auto;
-  padding:15mm;
-  box-sizing:border-box;
-}
-.title{
-  text-align:center;
-  font-weight:bold;
-}
-.info{
-  display:flex;
-  justify-content:space-between;
-  margin:10px 0 20px;
-  font-size:14px;
-}
-.words{
-  display:flex;
-  flex-wrap:wrap;
-  gap:var(--rowGap) var(--gap);
-}
-.word{text-align:center;}
-.pinyin{
-  font-size:var(--pinyinSize);
-  margin-bottom:4px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(var(--charCount),var(--cellSize));
-}
-.cell{
-  width:var(--cellSize);
-  height:var(--cellSize);
-  border:1px solid #000;
-  position:relative;
-}
-.cell::before,
-.cell::after{
-  content:"";
-  position:absolute;
-  border:1px dashed #ccc;
-}
-.cell::before{left:50%;top:0;height:100%;}
-.cell::after{top:50%;left:0;width:100%;}
 
-button{
-  background:#ff8c00;
-  border:none;
-  color:#fff;
-  padding:6px 12px;
-  border-radius:4px;
-  cursor:pointer;
+body{margin:0;font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:#eef2f7;}
+.app{display:flex;height:100vh}
+
+/* 左侧 */
+.sidebar{
+  width:360px;background:#fff;padding:16px;
+  border-right:1px solid #ddd;overflow:auto
 }
+.header{color:#2b6cb0;font-weight:bold;margin-bottom:10px}
+.block{border:1px solid #e5e7eb;border-radius:6px;padding:12px;margin-bottom:14px}
+.block h3{margin:0 0 8px;font-size:14px}
+.row{display:flex;align-items:center;gap:8px;font-size:13px;margin:6px 0}
+input,textarea{width:100%;box-sizing:border-box;padding:6px}
+textarea{height:140px}
+
+/* 右侧 */
+.preview{flex:1;padding:10px;overflow:auto}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.page{
+  width:210mm;min-height:297mm;background:#fff;
+  margin:auto;padding:15mm;box-sizing:border-box
+}
+.title{text-align:center;font-weight:bold}
+.info{display:flex;justify-content:space-between;margin:10px 0 20px}
+.words{display:flex;flex-wrap:wrap;gap:var(--rowGap) var(--gap)}
+
+.word{text-align:center}
+.pinyin{font-size:var(--pinyin);margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(var(--count),var(--cell))}
+.cell{
+  width:var(--cell);height:var(--cell);
+  border:1px solid #000;position:relative
+}
+
+/* 田字格 */
+.tian .cell::before,.tian .cell::after{
+  content:"";position:absolute;border:1px dashed #ccc
+}
+.tian .cell::before{left:50%;top:0;height:100%}
+.tian .cell::after{top:50%;left:0;width:100%}
+
+/* 米字格 */
+.mi .cell::before,.mi .cell::after,.mi .cell i{
+  content:"";position:absolute;border:1px dashed #ccc
+}
+.mi .cell::before{left:50%;top:0;height:100%}
+.mi .cell::after{top:50%;left:0;width:100%}
+.mi .cell i{
+  left:0;top:0;width:100%;height:100%;
+  transform:rotate(45deg)
+}
+
+button{background:#ff8c00;border:none;color:#fff;padding:6px 12px;border-radius:4px}
 
 @media print{
-  body{background:none;}
-  .sidebar,.topbar{display:none;}
-  .preview{padding:0;}
+  body{background:none}
+  .sidebar,.topbar{display:none}
+  .preview{padding:0}
 }
 </style>
 </head>
@@ -144,92 +78,79 @@ button{
 <body>
 <div class="app">
 
-  <!-- 左侧 -->
-  <div class="sidebar">
-    <div class="header">📘 看拼音写词语练习生成工具</div>
+<div class="sidebar">
+  <div class="header">📘 看拼音写词语练习生成工具</div>
 
-    <div class="block">
-      <h3>标题设置</h3>
-      <input id="titleInput" value="汉字拼音练习">
-      <div class="row">
-        标题大小
-        <input type="range" min="18" max="36" value="24" id="titleSize">
-        <span id="titlePx">24px</span>
-      </div>
-    </div>
+  <div class="block">
+    <h3>标题设置</h3>
+    <input id="titleInput" value="汉字拼音练习">
+    <div class="row">标题大小 <input type="range" min="18" max="36" value="24" id="titleSize"></div>
+  </div>
 
-    <div class="block">
-      <h3>词语录入（直接输入汉字）</h3>
-      <textarea id="wordsInput">你好
+  <div class="block">
+    <h3>词语录入（每行一个）</h3>
+    <textarea id="wordsInput">你好
 这是
 早上好</textarea>
-      <div class="count" id="count"></div>
-    </div>
-
-    <div class="block">
-      <h3>格式设置</h3>
-      <div class="row">每词字数 <input type="number" id="charCount" value="2"></div>
-      <div class="row">格子大小 <input type="range" min="40" max="80" value="50" id="cellSize"></div>
-      <div class="row">拼音大小 <input type="range" min="10" max="24" value="14" id="pinyinSize"></div>
-    </div>
   </div>
 
-  <!-- 右侧 -->
-  <div class="preview">
-    <div class="topbar">
-      <strong>👀 预览效果</strong>
-      <button onclick="window.print()">导出 PDF</button>
+  <div class="block">
+    <h3>格式设置</h3>
+    <div class="row">
+      <label><input type="radio" name="grid" value="tian" checked> 田字格</label>
+      <label><input type="radio" name="grid" value="mi"> 米字格</label>
     </div>
-
-    <div class="page">
-      <div class="title" id="title">汉字拼音练习</div>
-
-      <div class="info">
-        <div>班级：______</div>
-        <div>姓名：______</div>
-        <div>得分：______</div>
-      </div>
-
-      <div class="words" id="words"></div>
-    </div>
+    <div class="row">每词字数 <input id="count" type="number" value="2"></div>
+    <div class="row">格子大小 <input id="cell" type="range" min="40" max="80" value="50"></div>
+    <div class="row">拼音大小 <input id="pinyin" type="range" min="10" max="24" value="14"></div>
   </div>
+</div>
+
+<div class="preview">
+  <div class="topbar">
+    <strong>👀 预览效果</strong>
+    <button onclick="window.print()">导出PDF</button>
+  </div>
+
+  <div class="page">
+    <div class="title" id="title">汉字拼音练习</div>
+    <div class="info">
+      <div>班级：______</div>
+      <div>姓名：______</div>
+      <div>得分：______</div>
+    </div>
+    <div class="words" id="words"></div>
+  </div>
+</div>
+
 </div>
 
 <script>
 function render(){
-  const text=document.getElementById("wordsInput").value.trim();
-  const list=text?text.split("\n"):[];
-  document.getElementById("count").innerText=`共 ${list.length} 个词语`;
+  title.innerText=titleInput.value
+  title.style.fontSize=titleSize.value+"px"
 
-  document.getElementById("title").innerText=document.getElementById("titleInput").value;
-  const tsize=document.getElementById("titleSize").value;
-  document.getElementById("title").style.fontSize=tsize+"px";
-  document.getElementById("titlePx").innerText=tsize+"px";
+  document.documentElement.style.setProperty("--cell",cell.value+"px")
+  document.documentElement.style.setProperty("--pinyin",pinyin.value+"px")
+  document.documentElement.style.setProperty("--count",count.value)
 
-  document.documentElement.style.setProperty("--cellSize",document.getElementById("cellSize").value+"px");
-  document.documentElement.style.setProperty("--pinyinSize",document.getElementById("pinyinSize").value+"px");
-  document.documentElement.style.setProperty("--charCount",document.getElementById("charCount").value);
+  const type=document.querySelector("input[name=grid]:checked").value
+  words.innerHTML=""
 
-  const box=document.getElementById("words");
-  box.innerHTML="";
-
-  list.forEach(word=>{
-    const py=pinyinPro.pinyin(word,{toneType:"symbol",type:"array"}).join(" ");
-    const div=document.createElement("div");
-    div.className="word";
-    div.innerHTML=`
+  wordsInput.value.trim().split("\n").forEach(w=>{
+    const py=pinyinPro.pinyin(w,{toneType:"symbol"}).join(" ")
+    const d=document.createElement("div")
+    d.className="word "+type
+    d.innerHTML=`
       <div class="pinyin">${py}</div>
       <div class="grid">
-        ${"<div class='cell'></div>".repeat(document.getElementById("charCount").value)}
-      </div>`;
-    box.appendChild(div);
-  });
+        ${"<div class='cell'><i></i></div>".repeat(count.value)}
+      </div>`
+    words.appendChild(d)
+  })
 }
-
-document.querySelectorAll("input,textarea").forEach(e=>{
-  e.addEventListener("input",render);
-});
-render();
+document.querySelectorAll("input,textarea").forEach(e=>e.oninput=render)
+render()
 </script>
 </body>
 </html>
