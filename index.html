@@ -1,465 +1,472 @@
-
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta http-equiv="Cache-Control" content="no-transform " />
-<title>看拼音写汉字字帖生成器、看拼音写词语字帖生成器_田字格字帖生成器_字帖打印</title>
-<meta name="keywords" content="田字格字帖,字帖,字帖打印,看拼音写汉字,看拼音写词语,儿童田字格打印" />
-<meta name="description" content="在线生成看拼音写汉字、看拼音写词语字帖，13年老牌田字格字帖生成工具，做字帖，我们专业！" />
-<style>
-	@font-face {
-      font-family: 'hy-py';
-      src: url('/zi/images/py.ttf') format('truetype');
-    }
-	body,div,p,ul,h1,li{ padding:0; margin:0; list-style:none;}
-	body{color:#222; font-size:14px; padding-top:10px;}
-	div{ width:980px; margin:0px auto; line-height:36px; font-family:"微软雅黑";}
-	a{color: #222;text-decoration: none}
-	textarea{ width:950px; height:120px; font-size: 16px; border:1px solid #ccc;border-radius: 8px; padding: 10px;outline: none;}
-	#pybox{font-family: "hy-py","宋体";}
-	div.btn{ text-align:center; height:60px; line-height:50px; }
-	div.btn span{ width:88px; height:33px; font-size:18px; background:#eee; padding: 6px; border: 1px solid #ccc; border-radius: 6px;padding: 4px 6px; cursor: pointer;}
-	div.top{ width:980px; height:45px; margin:0px auto; padding:12px 0px;}
-	div.top h1{ font-size:32px; font-weight:bold;}
-	div.top h1 span{ font-size:18px;}
-	div.meu{ width:100%; background:#3e3d43; height:36px;line-height:36px; text-align:center; font-size:16px; padding:8px 0px; color:#fff;}
-	div.meu a{ color:#fff; text-decoration:none; padding:0px 15px;}
-	div.baidubox{ position:fixed; _position:absolute; z-index:9; background:#f8f8f8; bottom:0px; left:50%; margin-left:-502px; padding:12px; border:1px solid #ccc;border-radius: 5px;}
-	.bdsharebuttonbox{padding-left:153px !important; background: url(../zi/images/shareto.png) 28px center no-repeat !important;}
-	.bdsharebuttonbox strong{font-size:18px;padding-top:6px;}
-	.green{ color:#009900;}
-	.red{ color:#cc0000;}
-	.info{ padding:12px 8px;border:1px dashed #ccc; line-height:28px;border-radius: 8px;}
-	.info strong{color:red;font-size:16px;}
-	.info span{font-size:16px;}
-	.foot{ padding:18px 0px; height:90px; line-height:30px;}
-	.foot a{text-decoration:none;color:#222;}
-
-	#prompt h3{padding: 3px;margin: 0;}
-	#description{padding: 12px 0px;line-height: 28px;}
-	.input{width:360px;height: 26px; border-radius:5px; border:1px solid #ccc;padding: 1px 6px;}
-</style>
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<script>
-     (adsbygoogle = window.adsbygoogle || []).push({
-          google_ad_client: "ca-pub-2875483189949087",
-          enable_page_level_ads: true
-     });
-</script></head>
-
-<body>
-<style>
-    .lsiderbox {
-        display: none;
-        width: 136px;
-        text-align: center;
-        position: fixed;
-        _position: absolute;
-        z-index: 9;
-        top: 78px;
-        left: 0;
-        line-height: 36px;
-        background: #f8f8f8;
-        border: 1px solid #ccc;
-        font-size: 13px;
-    }
-
-    .lsiderbox h3 {
-        display: block;
-        background: #ddd;
-        padding: 6px 8px;
-        margin: 0;
-        height: 39px;
-        line-height: 39px;
-        font-size: 14px;
-    }
-    .lsiderbox diy.top {
-        padding: 8px;
-        display: block;
-        text-align: left;
-        word-break: break-all;
-        line-height: 36px;
-    }
-
-    .lsiderbox diy.btm {
-        font-size: 12px;
-        line-height: 18px;
-        display: block;
-        padding-bottom: 18px;
-    }
-</style>
-
-<div class="lsiderbox">
-    <h3>推荐公众号</h3>
-    <diy class="top">
-        我是两个孩子爸爸<br>
-        从事育儿工作6年多<br>
-        服务了上千个家庭<br>
-        出版过多本育儿书籍<br>
-    </diy>
-    <diy class="btm">
-        <img src="/zi/images/rxw/qr_120.jpg" alt="任小巍家庭教育公众号"/> <br>
-    若您在育儿方面有困惑<br>
-    可以关注我 找我聊聊<br>
-    </diy>
-</div>
-</span>
-</div>
-<div class="top"><h1>看拼音写汉字、看拼音写词语字帖生成器</h1></div>
-<style type="text/css">
-    nav {
-        min-width: 1000px;
-        margin: 0 auto;
-        background: #3e3d43;
-        border: 1px solid #080808;
-        box-shadow:0 3px 15px rgba(0,0,0,.15);
-    }
-
-    nav::after {
-        display: block;
-        content: '';
-        clear: both;
-    }
-
-    nav ul {
-        padding: 0;
-        margin: 0 auto;
-        list-style: none;
-        width: 980px;
-    }
-
-    nav ul li {
-        float: left;
-        position: relative;
-    }
-
-    nav ul li a {
-        display: block;
-        color: rgba(255, 255, 255, .9);
-        text-decoration: none;
-        padding: 1rem 2rem;
-        border-top: 2px solid transparent;
-        border-bottom: 2px solid transparent;
-        transition: all .3s ease-in-out;
-    }
-
-    nav ul li a:hover,
-    nav ul li a:focus {
-        background: rgba(0, 0, 0, .15);
-    }
-
-    nav ul li a:focus {
-        color: white;
-    }
-
-    nav ul li a:not(:only-child)::after {
-        padding-left: 4px;
-        content: ' ▾';
-    }
-
-    nav ul li ul li {
-        min-width: 190px;
-    }
-
-    nav ul li ul li a {
-        background: transparent;
-        color: #555555;
-        padding: 1rem;
-        border-bottom: 1px solid #DDE0E7;
-    }
-
-    nav ul li ul li a:hover,
-    nav ul li ul li a:focus {
-        background: #eeeeee;
-        color: #111111;
-    }
-
-    nav .drop .dropdown {
-        z-index: 99999;
-        width: auto;
-        margin: 0;
-        font-size: 14px;
-        visibility: hidden;
-        transition: 0.3s;
-        opacity: 0;
-        position: absolute;
-        background: #ffffff;
-        box-shadow: 0 4px 10px rgba(10, 20, 30, .4);
-    }
-
-    nav .drop:hover .dropdown {
-        visibility: visible;
-        opacity: 1;
-    }
-
-</style>
-
-<nav class="nav">
-    <ul>
-        <li><a href="/">首页</a>
-        <li class="drop"><a href="javascript:void(0);">字帖生成工具</a>
-            <ul class="dropdown">
-                <li><a href="/zi/">田字格字帖生成器</a></li>
-                <li><a href="/py/">看拼音写词语生成器</a></li>
-                <li><a href="/zim/">田字格字帖(含拼音版)</a></li>
-                <li><a href="/shi/" target="_blank">古诗词字帖生成器</a></li>
-                <li><a href="/zix/" target="_blank">田字格字帖混排版</a></li>
-                <li><a href="/mo/" target="_blank">高清字帖模板打印</a></li>
-                <li><a href="/kb/" target="_blank">控笔字帖打印</a></li>
-            </ul>
-        </li>
-        <li class="drop"><a href="javascript:void(0);">实用教辅工具</a>
-            <ul class="dropdown">
-                <li><a href="/enmo/">数字、字母字帖生成器</a></li>
-                <li><a href="/cal/">算术题、口算题生成器</a></li>
-                <li><a href="/mhh/">描绘画在线生成器</a></li>
-                <li><a href="/dict/">汉字信息汇</a></li>
-                <li><a href="/dict/name.php">帮我给孩子取个名字</a></li>
-                <li><a href="/2/">二维码生成器</a></li>
-            </ul>
-        </li>
-        <li class="drop"><a href="javascript:void(0);">使用帮助</a>
-            <ul class="dropdown">
-                <li><a href="/zi/questions_and_answers.php" target="_blank">常见问题</a></li>
-                <li><a href="/zi/trust_me.php" target="_blank">推荐&使用教程</a></li>
-            </ul>
-        </li>
-
-        <li class="drop"><a href="javascript:void(0);">服务</a>
-            <ul class="dropdown">
-                <li><a href="/zi/about.php" target="_blank">关于我们</a></li>
-                <li><a href="/zi/vip.php" target="_blank">字帖制作工具定制服务</a></li>
-            </ul>
-        </li>
-
-        <li><a href="/zi/thank.php" target="_blank">感谢捐助</a></li>
-        <li><a href="index_en.php" target="_blank">English</a></li>
-    </ul>
-</nav>
-
-<form action="zi.php" method="post" target="_blank" id="tzg-form">
-<div id="description">
-        <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- hf2 -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-2875483189949087"
-         data-ad-slot="2050897784"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-在线生成看拼音写汉字、看拼音写词语。<br>
-13年老牌田字格字帖生成工具，做字帖，我们专业！支持田字格。<br>如果您有什么好的建议或意见，请联系8@an2.net。</div>
-<div id="prompt"><h3>请输入想要生成的汉字（词语之间用逗号隔开）：</h3></div>
-<div><textarea name="hz" id="hzbox"></textarea></div>
-<div id="py-div" style="display: none;"><div id="prompt"><h3>汉字对应的拼音：（如果不正确请手动修改）</h3></div> <textarea name="py" id="pybox"></textarea></div>
-<div>拼音类型：<input type="radio" name="py_type" value="pinyin" checked class="py_type"><span>拼音</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="py_type" value="zhuyin" class="py_type">注音</div>
-<div>词语顺序：<input type="radio" name="sort_type" value="1" checked><span>原顺序</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="sort_type" value="2">随机顺序</div>
-<div>田字格内显示汉字：<input type="radio" name="isfill" value="1"><span>是</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="isfill" value="2" checked>否</div>
-<div>田字格内文字颜色：<input type="radio" name="typem" value="2"><span style="color:#000">黑色</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="3"><span style="color:#888888">非常深</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="4"><span style="color:#999999">深</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="5"><span style="color:#a0a0a0">较深</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="6"> <span style="color:#aaaaaa">略浅</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="7" checked=""><span style="color:#b8b8b8">适中</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="radio" name="typem" value="8"><span style="color:#cccccc">非常浅</span></div>
-<div>自定义页头：<input type="text" name="tzgbt" value="田字格字帖生成器 网址：www.an2.net" class="input"></div>
-<div class="btn"><span id="hz-btn">生成拼音</span> <span id="py-btn" style="display: none;">确认生成</span></div>
-<div class="info" style="text-align: left;">
-	
-<!--<div style="width: 968px; margin: 0 auto; border: 1px solid #e6e7e8; background: #f8f8f8">-->
-<!--    <div style="float: left; width: 320px; padding: 2px 2px 2px 0px; ">-->
-<!--        <a href="https://union-click.jd.com/jdc?e=618%7Cpc%7C&p=JF8BAOwJK1olXg8EXVtcDEgXAl8IGloUXgULUVhVAUwnRzBQRQQlBENHFRxWFlVPRjtUBABAQlRcCEBdCUoWAGwBHl0dVAEdDRsBVXtOGSxoQ1J0PmUYCCwgQBNhBAhdSSh1UQoyUV5cCU0TBmkAG2sVXAcDUF5UD0kfM18IGmtDMwYDVV9fD0gSBG04GVoUWAMFU11ZD3sXBGsJH18WXgEKUldaOEwXCl9bQx1RHV5dAm5tOEgnBG8BD11nHFQWUixtOEsnAF9KdV8cWARVUVtaAEsUUWoAGFNFCQNVBFtbDEwWUWdbEwtHbQQDVVpUOA" target="_blank">-->
-<!--            <img src="/static/images/ok6.jpg">-->
-<!--        </a>-->
-<!--    </div>-->
-<!--    <div style="float: left; width: 320px; padding: 2px">-->
-<!--        <a href="https://union-click.jd.com/jdc?e=618%7Cpc%7C&p=JF8BANkJK1olXDYBV11cCk0TMytXQwVKbV9HER8fA1UJWypcR0ROCBlQCgJDC0gUAm0OH0RMGFpfZCgfXQtgBjxIey5ROGByBygtXBJRRh8EF2sQXQcDUlpYDkMXM28JGloRXQ8FVlZtOEsWMzlmG1oUXAcDVVpdCnsVAm4NHl0WXgMKZF5aDEoTB2wKElgSVA8yU15UOBhPRStIQwRDbTYyV25aCEIDBR1JSU8TLzYyVG5eOAl5B2YNGQwQWAEKVF0PDUMUCz9cHgxFWAAGU18PABgfUz04GVoUWQ8y" target="_blank">-->
-<!--            <img src="/static/images/ok4.jpg">-->
-<!--        </a>-->
-<!--    </div>-->
-<!--    <div style="float: left; width: 320px; padding: 2px 0 2px 2px">-->
-<!--        <a href="https://union-click.jd.com/jdc?e=618%7Cpc%7C&p=JF8BANkJK1olXDYCV1xdC08WMytXQwVKbV9HER8fA1UJWypcR0ROCBlQCgJDCEgVA2wMGkRMGFpfZC1cDRdtfzRSeSB3FE1fFRseSTB-fA8EF2sQXQcDUlpYDkMXM28JGloRXQ8FVlZtOEsWMzlmG1oUXAcDVV5fD3sVAm4NHl0QXwQDZF5aDEoTB2wNH1sQXw8yU15UOBhPRStIQwRDbTYyV25aCEIDBR1JSU8TLzYyVG5eOAl5B2YNGQwQWAEKVF0PDUMUCz9cHgxFWAAGU18PABgfUz04GVoUWQ8y" target="_blank">-->
-<!--            <img src="/static/images/ok5.jpg">-->
-<!--        </a>-->
-<!--    </div>-->
-<!--    <div style="overflow: hidden"></div>-->
-<!--</div>-->
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <!-- hf1 -->
-    <ins class="adsbygoogle"
-         style="display:block"
-         data-ad-client="ca-pub-2875483189949087"
-         data-ad-slot="9156783060"
-         data-ad-format="auto"
-         data-full-width-responsive="true"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-
-	<a name="help"></a><strong>注意：</strong>请认真阅读以下内容<p>
-	第一步：输入要生成的汉字，词语之间用逗号隔开，点击“生成拼音”按钮；<br>
-	第二步：待生成的拼音展示后，核对拼音，如果出现由于多音字导致拼音不准确，请手动修改拼音；<br>
-	第三步：点击“确认生成”按钮；<br>
-	第四步：打印。<br>
-	为保证打印效果，建议使用微软Edge浏览器、谷歌浏览器，字体为楷体;<br>
-	<img src="/zi/images/print.png"><br>
-    如果您想将字帖生成文件，可以使用Chrome或者Edge浏览器打印机选择"另存为PDF"，即可生成PDF文件；<br>
-	效果如下<br>
-	<img src="images/p0.png" />
-	<img src="images/p1.png" />
-	
-<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-<!-- 广告3 -->
-<ins class="adsbygoogle"
-     style="display:block"
-     data-ad-client="ca-pub-2875483189949087"
-     data-ad-slot="4122217267"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>
-<script>
-(adsbygoogle = window.adsbygoogle || []).push({});
-</script>
-
-</p></div>
-
-</form>
-
-
-<div class="foot">田字格字帖生成器相关工具，自2013年上线以来，一致致力于为您提供更优质全面的字帖资源和更好的用户体验。<br>
-据百度统计统计：目前使用用户已遍布150多个国家或地区，希望能给更多的家长和老师提供帮助，满足望子成龙的家长对孩子的一份爱。<br>
-版权所有 &copy; 2012 - 2026 Hyman Ren  京ICP备2021026679号 Server in: CN
-<script>
-var _hmt = _hmt || [];
-(function() {
-  var hm = document.createElement("script");
-  hm.src = "//hm.baidu.com/hm.js?26806bf65928ca10b21fdd33824e109f";
-  var s = document.getElementsByTagName("script")[0]; 
-  s.parentNode.insertBefore(hm, s);
-})();
-</script>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-149669904-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-149669904-1');
-</script> </div>
-
-
-<style type="text/css">
-    .jzbox {
-        width: 136px;
-        text-align: center;
-        position: fixed;
-        _position: absolute;
-        z-index: 9;
-        top: 78px;
-        right: 0;
-        line-height: 28px;
-        background: #f8f8f8;
-        border: 1px solid #ccc;
-        font-size: 13px;
-    }
-
-    .jzbox .jztitle {
-        display: block;
-        background: #ddd;
-        padding: 6px 8px;
-        height: 39px;
-        line-height: 39px
-    }
-
-    .jzbox diy.top {
-        padding: 8px 4px;
-        display: block;
-    }
-
-    .jzbox diy.btm {
-        font-size: 12px;
-        line-height: 18px;
-        display: block;
-        padding-bottom: 18px;
-    }
-
-    .jzbox a {
-        text-decoration: none;
-        color: #000;
-    }
-</style>
-<div class="jzbox">
-    <strong class="jztitle">使用教程</strong>
-    <diy class="top">
-        <a href="https://www.bilibili.com/video/BV1cP4y1a7ej" target="_blank">字帖制作教程(国内)</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=Njy5rc9A2YM" target="_blank">字帖制作教程(国外)</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=xdaAP5DEpDI" target="_blank">制作中文作业(国外)</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=qxv4I0cPUoc" target="_blank">中文学习网站推荐</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=E-OnJafQL58" target="_blank">한국어</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=P9FA_XwKQ-s" target="_blank">ViệtName</a>
-        <br>
-        <a href="https://www.youtube.com/watch?v=rR46guLD15M" target="_blank">หลักสูตรภาษาไทย</a>
-        <br>
-
-    </diy>
-    <diy class="btm">
-        <img src="/zi/images/gzh.png" alt="田字格字帖生成器公众号"/><br>
-        关注我们微信公众号<br>
-        最新功能优化早知道<br>
-    </diy>
-</div><script type="text/javascript" src="/zi/js/jquery-1.9.0.min.js"></script>
-<script type="text/javascript">
-	$(function(){
-		$("#hz-btn").on("click",function(){
-			var hz = $("#hzbox").val();
-			if(!hz) {
-				alert("请输入想要生成的汉字！");return;
-			}
-			$("#py-btn").hide();
-            let pyType = $("input.py_type:checked").val();
-			$.ajax({
-				url:'py.php',
-				async:true,
-				dataType:'json',
-				type:'POST',
-				data:{hz:hz, py_type:pyType}
-			}).done(function(ret){
-				if(ret.status){
-					$("#pybox").val(ret.data);
-					$("#py-div").show();
-					$("#py-btn").show();
-				}else{
-					alert("转化为拼音失败");return;
-				}
-			})
-			.fail(function(){
-				alert("转化为拼音失败");return;
-			});
-		});
-		$("#py-btn").on("click",function(){
-			$("#tzg-form").submit();
-		});
-	});
-	$(function(){
-		if($(window).width() < 1200){
-			$(".lsiderbox").hide();
-			$(".jzbox").hide();
-		}
-	});
-</script>
-<script>
-    $(function (){
-        let lang = navigator.userLanguage || window.navigator.language;
-        lang = lang.toLowerCase();
-        if (lang === 'zh-tw' || lang === 'zh-hk') {
-            let jsNode = document.createElement('script');
-            jsNode.src = '/zi/js/t.js';
-            document.getElementsByTagName('head')[0].appendChild(jsNode);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>看拼音写词语练习生成工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
         }
-    })
-</script></body>
+        body {
+            background: #f5f7fa;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            gap: 25px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        /* 左侧控制面板 */
+        .left-panel {
+            width: 380px;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+        .panel-group {
+            margin-bottom: 22px;
+        }
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .panel-title::before {
+            content: "H";
+            color: #4294ff;
+            font-weight: bold;
+        }
+        .input-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .title-input {
+            width: 100%;
+            height: 38px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            padding: 0 10px;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: #4294ff;
+        }
+        textarea {
+            width: 100%;
+            height: 220px;
+            border: 1px solid #e5e6eb;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+        .textarea-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+        .clear-btn {
+            color: #4294ff;
+            cursor: pointer;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 15px;
+            font-size: 14px;
+            color: #555;
+            margin: 6px 0;
+        }
+        .gap-sliders {
+            margin-top: 10px;
+        }
+        .slider-item {
+            margin-bottom: 12px;
+        }
+
+        /* 右侧预览区 */
+        .right-panel {
+            flex: 1;
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .preview-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .preview-title::before {
+            content: "👁";
+            font-size: 14px;
+        }
+        .preview-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .export-btn {
+            background: #ff7d00;
+            color: #fff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .preview-box {
+            border: 1px solid #e5e6eb;
+            border-radius: 8px;
+            padding: 30px;
+            min-height: 800px;
+            background: #fff;
+        }
+        .sheet-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .sheet-info {
+            display: flex;
+            gap: 40px;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        .word-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        .word-row {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .word-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .pinyin {
+            font-size: 26px;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+            height: 32px;
+        }
+        .tianzige {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #333;
+            position: relative;
+        }
+        .tianzige::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #ccc;
+            transform: translateX(-50%);
+        }
+        .tianzige::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #ccc;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧设置面板 -->
+        <div class="left-panel">
+            <!-- 标题设置 -->
+            <div class="panel-group">
+                <div class="panel-title">标题设置</div>
+                <label class="input-label">练习标题</label>
+                <input type="text" class="title-input" id="sheetTitle" value="汉字拼音练习">
+                <label class="input-label">标题大小</label>
+                <input type="range" min="16" max="40" value="24" id="titleSize">
+                <div class="slider-row">
+                    <span>小</span>
+                    <span>24px</span>
+                    <span>大</span>
+                </div>
+            </div>
+
+            <!-- 词语录入 -->
+            <div class="panel-group">
+                <div class="panel-title">词语录入</div>
+                <textarea id="wordInput" placeholder="请输入词语（每行一个）">
+你好
+这是
+早上
+你好
+早上
+你好
+早上
+你好
+早上
+你好
+早上</textarea>
+                <div class="textarea-footer">
+                    <span id="wordCount">49个词语</span>
+                    <span class="clear-btn" onclick="clearWords()">清空</span>
+                </div>
+            </div>
+
+            <!-- 格式设置 -->
+            <div class="panel-group">
+                <div class="panel-title">格式设置</div>
+                <label class="input-label">格线类型</label>
+                <div class="radio-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="gridType" checked>
+                        <span>田字格</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="gridType">
+                        <span>米字格</span>
+                    </div>
+                </div>
+
+                <label class="input-label" style="margin-top:10px">表头设置</label>
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>第一栏 班级</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>第二栏 姓名</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>第三栏 得分</span>
+                    </div>
+                </div>
+
+                <label class="input-label" style="margin-top:10px">字中间线条</label>
+                <div class="radio-group">
+                    <div class="checkbox-item">
+                        <input type="radio" name="lineType">
+                        <span>实线</span>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" name="lineType" checked>
+                        <span>虚线</span>
+                    </div>
+                </div>
+
+                <div class="gap-sliders">
+                    <div class="slider-item">
+                        <label class="input-label">格子大小</label>
+                        <input type="range" min="50" max="120" value="80">
+                        <div class="slider-row">
+                            <span>小</span>
+                            <span>60px</span>
+                            <span>大</span>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label class="input-label">格子间距</label>
+                        <input type="range" min="0" max="40" value="20">
+                        <div class="slider-row">
+                            <span>0px</span>
+                            <span>20px</span>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label class="input-label">行距</label>
+                        <input type="range" min="10" max="40" value="18">
+                        <div class="slider-row">
+                            <span>小</span>
+                            <span>18px</span>
+                            <span>大</span>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label class="input-label">词语间距</label>
+                        <input type="range" min="5" max="40" value="21">
+                        <div class="slider-row">
+                            <span>5px</span>
+                            <span>21px</span>
+                            <span>30px</span>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label class="input-label">拼音字体大小</label>
+                        <input type="range" min="12" max="50" value="26">
+                        <div class="slider-row">
+                            <span>8px</span>
+                            <span>26px</span>
+                            <span>40px</span>
+                        </div>
+                    </div>
+                    <div class="slider-item">
+                        <label class="input-label">汉字字体大小</label>
+                        <input type="range" min="12" max="60" value="36">
+                        <div class="slider-row">
+                            <span>10px</span>
+                            <span>36px</span>
+                            <span>100px</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧预览面板 -->
+        <div class="right-panel">
+            <div class="preview-header">
+                <div class="preview-title">预览效果</div>
+                <div class="preview-toolbar">
+                    <div class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>多页显示标题</span>
+                    </div>
+                    <button class="export-btn">导出PDF</button>
+                </div>
+            </div>
+            <div class="preview-box" id="previewBox">
+                <div class="sheet-title" id="showTitle">汉字拼音练习</div>
+                <div class="sheet-info">
+                    <span>班级: _______</span>
+                    <span>姓名: _______</span>
+                    <span>得分: _______</span>
+                </div>
+                <div class="word-list" id="wordList">
+                    <!-- 词语自动生成在这里 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 拼音映射表（基础常用词，可自行扩充）
+        const pinyinMap = {
+            "你好": "nǐ hǎo",
+            "这是": "zhè shì",
+            "早上": "zǎo shàng",
+            "我": "wǒ",
+            "爱": "ài",
+            "学": "xué",
+            "习": "xí"
+        }
+
+        // 初始化渲染
+        window.onload = function() {
+            renderWords();
+            countWords();
+        }
+
+        // 清空词语
+        function clearWords() {
+            document.getElementById('wordInput').value = '';
+            renderWords();
+            countWords();
+        }
+
+        // 统计词语数量
+        function countWords() {
+            let val = document.getElementById('wordInput').value.trim();
+            let arr = val ? val.split('\n').filter(i=>i.trim()) : [];
+            document.getElementById('wordCount').innerText = arr.length + '个词语';
+        }
+
+        // 渲染词语+拼音+田字格
+        function renderWords() {
+            let val = document.getElementById('wordInput').value.trim();
+            let arr = val ? val.split('\n').filter(i=>i.trim()) : [];
+            let list = document.getElementById('wordList');
+            list.innerHTML = '';
+
+            let row = document.createElement('div');
+            row.className = 'word-row';
+            list.appendChild(row);
+
+            arr.forEach((word, idx) => {
+                word = word.trim();
+                if(!word) return;
+                let py = pinyinMap[word] || word;
+                
+                // 换行（每行4个）
+                if(idx > 0 && idx % 4 === 0) {
+                    row = document.createElement('div');
+                    row.className = 'word-row';
+                    list.appendChild(row);
+                }
+
+                let item = `
+                <div class="word-item">
+                    <div class="pinyin">${py}</div>
+                    <div class="tianzige"></div>
+                </div>`;
+                row.innerHTML += item;
+            });
+        }
+
+        // 监听输入变化实时刷新
+        document.getElementById('wordInput').addEventListener('input', () => {
+            renderWords();
+            countWords();
+        });
+        document.getElementById('sheetTitle').addEventListener('input', () => {
+            document.getElementById('showTitle').innerText = document.getElementById('sheetTitle').value;
+        });
+    </script>
+</body>
 </html>
