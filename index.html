@@ -2,21 +2,21 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>看拼音写词语专业生成工具</title>
+    <title>专业看拼音写词语生成器 - 增强版</title>
     <script src="https://unpkg.com/pinyin-pro"></script>
     <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #3b82f6;
-            --grid-size: 60px;
-            --grid-color: #333;
+            --grid-size: 65px;
+            --grid-color: #d32f2f;
             --pinyin-size: 24px;
-            --hanzi-size: 36px;
-            --row-gap: 20px;
+            --hanzi-size: 38px;
+            --row-gap: 25px;
             --word-gap: 30px;
         }
 
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
         body { margin: 0; background: #f1f5f9; font-family: 'Noto Sans SC', sans-serif; display: flex; height: 100vh; overflow: hidden; }
 
         /* 左侧配置面板 */
@@ -25,48 +25,69 @@
         .control-group { margin-bottom: 24px; border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; }
         .group-title { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
-        /* 输入控件样式 */
         .item-label { display: block; font-size: 13px; color: #64748b; margin: 10px 0 5px; }
-        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+        textarea { resize: vertical; }
         .slider-box { display: flex; align-items: center; gap: 10px; margin: 8px 0; }
         input[type="range"] { flex: 1; accent-color: var(--primary); }
         .val-tag { min-width: 45px; font-size: 12px; color: var(--primary); font-weight: bold; }
 
-        /* 复选框/单选框样式 */
         .check-group { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0; }
         .check-item { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
 
         /* 右侧预览区 */
-        .preview-area { flex: 1; background: #94a3b8; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        .sheet { width: 210mm; height: 297mm; background: white; padding: 15mm; box-shadow: 0 10px 25px rgba(0,0,0,0.2); position: relative; display: flex; flex-direction: column; flex-shrink: 0; }
+        .preview-area { flex: 1; background: #94a3b8; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        
+        /* A4 页面设置 */
+        .sheet { 
+            width: 210mm; 
+            min-height: 297mm; 
+            background: white; 
+            padding: 15mm 15mm 20mm; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
+            position: relative; 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0;
+            box-sizing: border-box;
+            page-break-after: always;
+        }
 
-        /* 预览内容排版 */
         .sheet-header { text-align: center; margin-bottom: 8mm; }
         .sheet-title { font-size: 28px; font-weight: bold; margin-bottom: 4mm; }
-        .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; margin-bottom: 5mm; }
-        .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 60px; display: inline-block; }
+        .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; }
+        .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 80px; display: inline-block; }
 
-        .sheet-content { flex: 1; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
+        .sheet-content { 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-content: flex-start; 
+            row-gap: var(--row-gap); 
+            column-gap: var(--word-gap); 
+        }
+
+        /* 单词与格子 */
         .word-block { display: flex; break-inside: avoid; }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
-        
-        .pinyin-box { height: 30px; font-family: 'Andika', sans-serif; font-size: var(--pinyin-size); color: #333; display: flex; align-items: flex-end; }
+        .pinyin-box { height: 35px; font-family: 'Andika', sans-serif; font-size: var(--pinyin-size); color: #333; display: flex; align-items: flex-end; justify-content: center; width: 100%; }
         .grid-box { width: var(--grid-size); height: var(--grid-size); border: 1px solid var(--grid-color); position: relative; margin-left: -1px; display: flex; justify-content: center; align-items: center; }
         .char-unit:first-child .grid-box { margin-left: 0; }
 
-        /* 汉字层 */
+        /* 汉字样式 */
         .hanzi-content { font-family: "楷体", "KaiTi", serif; font-size: var(--hanzi-size); color: #333; position: absolute; }
-        .hanzi-trace { color: rgba(0,0,0,0.15); } /* 描红效果 */
+        .hanzi-answer { color: #e2e8f0 !important; } /* 答案模式：浅灰色 */
 
-        /* 格线 SVG */
+        /* 格线背景 */
         .bg-tian { background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='50%25' y1='0' x2='50%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3C/svg%3E"); }
         .bg-mi { background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='50%25' y1='0' x2='50%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='0' x2='100%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='100%25' y1='0' x2='0' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3C/svg%3E"); }
 
         .btn-export { width: 100%; padding: 15px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
-        
+        .tips { font-size: 12px; color: #94a3b8; line-height: 1.5; margin-top: 5px; }
+
         @media print {
+            body { background: white; overflow: visible; }
             .sidebar { display: none; }
-            .preview-area { padding: 0; background: white; }
+            .preview-area { padding: 0; background: white; overflow: visible; display: block; }
             .sheet { margin: 0; box-shadow: none; border: none; }
         }
     </style>
@@ -75,43 +96,43 @@
 
 <aside class="sidebar">
     <div class="config-scroll">
-        <div class="group-title">H 标题设置</div>
+        <div class="group-title">🏷️ 标题设置</div>
         <input type="text" id="docTitle" value="看拼音写词语练习" oninput="render()">
         
         <div class="group-title" style="margin-top:20px;">📝 词语录入</div>
-        <textarea id="wordInput" rows="6" oninput="render()" placeholder="你好&#10;这是*&#10;早上*">你好&#10;这是*&#10;早上*&#10;拼音&#10;练习*</textarea>
+        <textarea id="wordInput" rows="8" oninput="render()" placeholder="输入词语...">早上*&#10;练习&#10;重要(zhòng yào)&#10;乐(yuè)器</textarea>
+        <div class="tips">
+            * 技巧：<br>
+            1. 字后加 * 表示显示该汉字(描红)<br>
+            2. 括号指定拼音：重(zhòng)量<br>
+            3. 自动分页，可输入大量内容
+        </div>
         
-        <div class="group-title" style="margin-top:20px;">📊 格式设置</div>
-        
+        <div class="group-title" style="margin-top:20px;">⚙️ 功能控制</div>
+        <div class="check-group">
+            <label class="check-item"><input type="checkbox" id="showAnswer" onchange="render()"> 💡 显示答案模式</label>
+        </div>
+
+        <div class="group-title" style="margin-top:10px;">📊 格式设置</div>
         <span class="item-label">格线类型</span>
         <div class="check-group">
             <label class="check-item"><input type="radio" name="gridType" value="tian" checked onchange="render()"> 田字格</label>
             <label class="check-item"><input type="radio" name="gridType" value="mi" onchange="render()"> 米字格</label>
         </div>
 
-        <span class="item-label">表头设置</span>
-        <div class="check-group">
-            <label class="check-item"><input type="checkbox" id="showClass" checked onchange="render()"> 第一栏(班级)</label>
-            <label class="check-item"><input type="checkbox" id="showName" checked onchange="render()"> 第二栏(姓名)</label>
-            <label class="check-item"><input type="checkbox" id="showScore" checked onchange="render()"> 第三栏(得分)</label>
+        <span class="item-label">格子大小: <span id="sizeVal" class="val-tag">65px</span></span>
+        <input type="range" id="sizeRange" min="40" max="100" value="65" oninput="updateStyles()">
+
+        <span class="item-label">行间距: <span id="rowGapVal" class="val-tag">25px</span></span>
+        <input type="range" id="rowGapRange" min="10" max="80" value="25" oninput="updateStyles()">
+
+        <span class="item-label">拼音/汉字大小</span>
+        <div class="slider-box">
+            <input type="range" id="pySizeRange" min="12" max="40" value="24" oninput="updateStyles()">
+            <input type="range" id="hzSizeRange" min="20" max="80" value="38" oninput="updateStyles()">
         </div>
 
-        <span class="item-label">格子大小: <span id="sizeVal" class="val-tag">60px</span></span>
-        <input type="range" id="sizeRange" min="40" max="100" value="60" oninput="updateStyles()">
-
-        <span class="item-label">格子间距: <span id="wordGapVal" class="val-tag">30px</span></span>
-        <input type="range" id="wordGapRange" min="0" max="50" value="30" oninput="updateStyles()">
-
-        <span class="item-label">行间距: <span id="rowGapVal" class="val-tag">20px</span></span>
-        <input type="range" id="rowGapRange" min="10" max="60" value="20" oninput="updateStyles()">
-
-        <span class="item-label">拼音字体大小: <span id="pySizeVal" class="val-tag">24px</span></span>
-        <input type="range" id="pySizeRange" min="12" max="40" value="24" oninput="updateStyles()">
-
-        <span class="item-label">汉字字体大小: <span id="hzSizeVal" class="val-tag">36px</span></span>
-        <input type="range" id="hzSizeRange" min="20" max="80" value="36" oninput="updateStyles()">
-
-        <button class="btn-export" onclick="window.print()">📥 导出 PDF</button>
+        <button class="btn-export" onclick="window.print()">📥 导出 PDF / 打印</button>
     </div>
 </aside>
 
@@ -123,42 +144,73 @@
     function updateStyles() {
         const root = document.documentElement;
         const size = document.getElementById('sizeRange').value;
-        const wordGap = document.getElementById('wordGapRange').value;
         const rowGap = document.getElementById('rowGapRange').value;
         const pySize = document.getElementById('pySizeRange').value;
         const hzSize = document.getElementById('hzSizeRange').value;
 
         document.getElementById('sizeVal').innerText = size + 'px';
-        document.getElementById('wordGapVal').innerText = wordGap + 'px';
         document.getElementById('rowGapVal').innerText = rowGap + 'px';
-        document.getElementById('pySizeVal').innerText = pySize + 'px';
-        document.getElementById('hzSizeVal').innerText = hzSize + 'px';
 
         root.style.setProperty('--grid-size', size + 'px');
-        root.style.setProperty('--word-gap', wordGap + 'px');
         root.style.setProperty('--row-gap', rowGap + 'px');
         root.style.setProperty('--pinyin-size', pySize + 'px');
         root.style.setProperty('--hanzi-size', hzSize + 'px');
+        
+        // 渲染时需要重新计算分页
+        render(); 
     }
 
-    function render() {
-        const previewArea = document.getElementById('previewArea');
-        previewArea.innerHTML = '';
-        
-        const title = document.getElementById('docTitle').value;
-        const wordInput = document.getElementById('wordInput').value;
-        const gridType = document.querySelector('input[name="gridType"]:checked').value;
-        const bgClass = gridType === 'tian' ? 'bg-tian' : 'bg-mi';
+    // 解析输入文本，支持 "乐(yuè)器" 或 "早上*" 语法
+    function parseInput(text) {
+        const lines = text.split('\n').map(l => l.trim()).filter(l => l);
+        const result = [];
 
-        // 创建页面
+        lines.forEach(line => {
+            let chars = [];
+            // 正则匹配：汉字 + (可选括号拼音) + (可选星号)
+            const regex = /([\u4e00-\u9fa5])(?:\(([^)]+)\))?(\*)?/g;
+            let match;
+            
+            while ((match = regex.exec(line)) !== null) {
+                chars.push({
+                    char: match[1],
+                    customPinyin: match[2] || null,
+                    isHint: !!match[3]
+                });
+            }
+
+            // 如果没匹配到（比如纯汉字输入），降级处理
+            if (chars.length === 0 && line.length > 0) {
+                const pureText = line.replace(/\*/g, '');
+                const pinyins = pinyin(pureText, { type: 'array' });
+                line.split('').forEach((c, i) => {
+                    if(c === '*') return;
+                    result.push({ char: c, pinyin: pinyins[i], isHint: line[i+1] === '*' });
+                });
+            } else {
+                chars.forEach(item => {
+                    item.pinyin = item.customPinyin || pinyin(item.char, { toneType: 'symbol' });
+                });
+                result.push(chars);
+            }
+        });
+        return result;
+    }
+
+    function createNewSheet(title) {
         const sheet = document.createElement('div');
         sheet.className = 'sheet';
         
-        // 表头
         let metaHTML = '';
-        if(document.getElementById('showClass').checked) metaHTML += `<div class="meta-item">班级：<span></span></div>`;
-        if(document.getElementById('showName').checked) metaHTML += `<div class="meta-item">姓名：<span></span></div>`;
-        if(document.getElementById('showScore').checked) metaHTML += `<div class="meta-item">得分：<span></span></div>`;
+        if(document.getElementById('showAnswer').checked) {
+            metaHTML = `<div class="meta-item" style="color:red; font-weight:bold;">【答案页】</div>`;
+        } else {
+            metaHTML = `
+                <div class="meta-item">班级：<span></span></div>
+                <div class="meta-item">姓名：<span></span></div>
+                <div class="meta-item">得分：<span></span></div>
+            `;
+        }
 
         sheet.innerHTML = `
             <div class="sheet-header">
@@ -167,39 +219,65 @@
             </div>
             <div class="sheet-content"></div>
         `;
-        previewArea.appendChild(sheet);
-        const content = sheet.querySelector('.sheet-content');
+        return sheet;
+    }
 
-        // 渲染词语
-        wordInput.split('\n').forEach(line => {
-            const word = line.trim();
-            if(!word) return;
+    function render() {
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = '';
+        
+        const title = document.getElementById('docTitle').value;
+        const wordData = parseInput(document.getElementById('wordInput').value);
+        const gridType = document.querySelector('input[name="gridType"]:checked').value;
+        const showAnswer = document.getElementById('showAnswer').checked;
+        const bgClass = gridType === 'tian' ? 'bg-tian' : 'bg-mi';
 
+        let currentSheet = createNewSheet(title);
+        previewArea.appendChild(currentSheet);
+        let currentContent = currentSheet.querySelector('.sheet-content');
+
+        // A4 纸张可用高度 (297mm - 上下边距) 约 260mm
+        // 在网页端用像素估算，约 950px - 1000px
+        const maxHeight = 960; 
+
+        wordData.forEach(wordGroup => {
             const wordBlock = document.createElement('div');
             wordBlock.className = 'word-block';
 
-            // 提取汉字和是否带星号
-            const chars = word.replace(/\*/g, '').split('');
-            const pinyins = pinyin(word.replace(/\*/g, ''), { type: 'array' });
-
-            chars.forEach((char, idx) => {
-                const isHint = word.includes(char + '*');
+            wordGroup.forEach(item => {
                 const unit = document.createElement('div');
                 unit.className = 'char-unit';
+                
+                // 答案模式逻辑：如果是提示字，正常显示；如果不是提示字但开启了答案模式，显示浅色字
+                let hanziHtml = '';
+                if (item.isHint) {
+                    hanziHtml = `<div class="hanzi-content">${item.char}</div>`;
+                } else if (showAnswer) {
+                    hanziHtml = `<div class="hanzi-content hanzi-answer">${item.char}</div>`;
+                }
+
                 unit.innerHTML = `
-                    <div class="pinyin-box">${pinyins[idx]}</div>
-                    <div class="grid-box ${bgClass}">
-                        ${isHint ? `<div class="hanzi-content">${char}</div>` : ''}
-                    </div>
+                    <div class="pinyin-box">${item.pinyin}</div>
+                    <div class="grid-box ${bgClass}">${hanziHtml}</div>
                 `;
                 wordBlock.appendChild(unit);
             });
-            content.appendChild(wordBlock);
+
+            currentContent.appendChild(wordBlock);
+
+            // 检测是否溢出
+            if (currentSheet.scrollHeight > maxHeight) {
+                // 如果当前词块导致溢出，移到下一页
+                currentContent.removeChild(wordBlock);
+                currentSheet = createNewSheet(title);
+                previewArea.appendChild(currentSheet);
+                currentContent = currentSheet.querySelector('.sheet-content');
+                currentContent.appendChild(wordBlock);
+            }
         });
     }
 
     window.onload = () => {
-        updateStyles();
         render();
     }
 </script>
