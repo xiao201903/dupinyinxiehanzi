@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>看拼音写词语专业版 - 物理尺寸版</title>
+    <title>看拼音写词语专业版 - 一键PDF版</title>
     <script src="https://unpkg.com/pinyin-pro"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -65,26 +66,30 @@
         .file-upload-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
         .file-upload-wrap input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        .btn-export { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-export:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08); }
+        /* 导出按钮样式 */
+        .btn-export { width: 100%; padding: 14px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 5px; font-size: 15px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-export:hover:not(:disabled) { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08); }
+        .btn-export:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary { background: #64748b; margin-top: 10px; }
+        .btn-secondary:hover:not(:disabled) { background: #475569; }
         
         .preview-area { flex: 1; background: #cbd5e1; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         
         .sheet { 
             width: 210mm; 
-            height: 297mm; /* ⭐ 修复：这里改回绝对高度，才能触发溢出换页逻辑 */
+            height: 297mm; 
             background: white; 
             padding: 15mm var(--page-margin) 15mm var(--page-margin); 
-            margin-bottom: 30px; /* ⭐ 新增：多张纸之间的间距 */
+            margin-bottom: 30px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
             position: relative; display: flex; flex-direction: column; flex-shrink: 0;
             border-radius: 4px;
         }
 
         .sheet-header { text-align: center; margin-bottom: 8mm; flex-shrink: 0; }
-        .sheet-title { font-size: 28px; font-weight: bold; margin-bottom: 4mm; color: #000; }
+        .sheet-title { font-size: 28px; font-weight: bold; margin-bottom: 8mm; color: #000; }
         .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; color: #000; }
-        .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 60px; display: inline-block; }
+        .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 90px; display: inline-block; }
 
         .sheet-content { flex: 1; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
 
@@ -113,10 +118,12 @@
         .bg-mi { background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='50%25' y1='0' x2='50%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='0' x2='100%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='100%25' y1='0' x2='0' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3C/svg%3E"); }
 
         @media print {
-            body { background: white; overflow: visible; height: auto; display: block; }
+            @page { size: A4; margin: 0; } 
+            html, body { width: 210mm; height: auto; background: white; overflow: visible !important; margin: 0; padding: 0; display: block; }
             .sidebar { display: none !important; }
-            .preview-area { padding: 0; background: white; overflow: visible; gap: 0; display: block; }
-            .sheet { margin: 0; box-shadow: none; border: none; border-radius: 0; page-break-after: always; height: 297mm; }
+            .preview-area { padding: 0 !important; background: white; overflow: visible !important; display: block; }
+            .sheet { margin: 0; box-shadow: none; border: none; border-radius: 0; page-break-after: always; height: 297mm; box-sizing: border-box; }
+            .sheet:last-child { page-break-after: auto; }
         }
     </style>
 </head>
@@ -186,7 +193,9 @@
             <input type="range" id="hzSizeRange" min="20" max="70" value="36" oninput="updateStyles()">
         </div>
 
-        <button class="btn-export" onclick="window.print()">🖨️ 打印 / 导出 PDF</button>
+        <button class="btn-export" id="btnExportPDF" onclick="exportDirectPDF()">⬇️ 一键直接下载 PDF</button>
+        <button class="btn-export btn-secondary" onclick="window.print()">🖨️ 系统打印 / 矢量 PDF</button>
+        <p style="font-size: 11px; color: #94a3b8; margin-top: 8px; text-align: center;">提示：一键下载基于截屏技术，若需最高清晰度请使用系统打印导出</p>
     </div>
 </aside>
 
@@ -361,7 +370,6 @@
 
             contentArea.appendChild(wordBlock);
 
-            // 核心换页逻辑：如果内容超出了A4纸内部高度，就把这个词语放到下一页去
             if (contentArea.scrollHeight > contentArea.clientHeight + 2) { 
                 contentArea.removeChild(wordBlock); 
                 currentSheet = createNewSheet();
@@ -369,6 +377,49 @@
                 contentArea = currentSheet.querySelector('.sheet-content');
                 contentArea.appendChild(wordBlock);
             }
+        });
+    }
+
+    // ⭐ 核心逻辑：一键导出 PDF
+    function exportDirectPDF() {
+        const btn = document.getElementById('btnExportPDF');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '⏳ 正在生成 PDF...';
+        btn.disabled = true;
+
+        // 创建一个干净的临时容器，只包含需要导出的A4纸
+        const exportContainer = document.createElement('div');
+        const sheets = document.querySelectorAll('.sheet');
+        
+        sheets.forEach(sheet => {
+            const clone = sheet.cloneNode(true);
+            // 去除阴影和页间距，防止干扰 PDF 页面尺寸
+            clone.style.margin = '0';
+            clone.style.boxShadow = 'none';
+            // 告诉插件在这里进行强制换页
+            clone.style.pageBreakAfter = 'always';
+            exportContainer.appendChild(clone);
+        });
+
+        // 配置 html2pdf 参数
+        const title = document.getElementById('docTitle').value || '看拼音写词语练习';
+        const opt = {
+            margin:       0, // 已经在CSS里设置了内部边距，这里设为0
+            filename:     `${title}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true }, // scale: 2 保证清晰度
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        // 执行导出
+        html2pdf().set(opt).from(exportContainer).save().then(() => {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }).catch(err => {
+            console.error(err);
+            alert("抱歉，自动生成 PDF 失败，请尝试下方【系统打印】功能。");
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         });
     }
 
