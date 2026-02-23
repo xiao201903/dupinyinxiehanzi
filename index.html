@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>看拼音写词语专业版 - 纯净美化</title>
+    <title>看拼音写词语专业版 </title>
     <script src="https://unpkg.com/pinyin-pro"></script>
     <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -17,12 +17,12 @@
             --bg-body: #f1f5f9;
             --bg-panel: #ffffff;
             
-            --grid-size: 60px;
+            --grid-size: 16mm;
             --grid-color: #d32f2f;
             --pinyin-size: 24px;
             --hanzi-size: 36px;
-            --row-gap: 20px;
-            --word-gap: 30px;
+            --row-gap: 6mm;
+            --word-gap: 8mm;
             --page-margin: 15mm;
             --pinyin-font: 'Andika', sans-serif;
         }
@@ -30,20 +30,16 @@
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
         body { margin: 0; background: var(--bg-body); font-family: 'Noto Sans SC', sans-serif; display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
 
-        /* ================= 侧边栏美化 ================= */
         .sidebar { width: 380px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.03); z-index: 10; flex-shrink: 0; }
         
         .config-scroll { padding: 24px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
         
-        /* 优美的滚动条 */
         .config-scroll::-webkit-scrollbar { width: 6px; }
         .config-scroll::-webkit-scrollbar-track { background: transparent; }
         .config-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .config-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        /* 卡片式分组容器 */
         .config-group { background: #fff; }
-        
         .group-title { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--primary); padding-left: 10px; background: #f8fafc; padding-top: 8px; padding-bottom: 8px; border-radius: 0 6px 6px 0; }
         
         .item-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin: 12px 0 6px; align-items: center; font-weight: 500; }
@@ -61,11 +57,9 @@
         .check-item:hover { opacity: 0.8; }
         .check-item input[type="checkbox"], .check-item input[type="radio"] { accent-color: var(--primary); cursor: pointer; width: 16px; height: 16px; }
 
-        /* 高亮功能区 */
         .feature-box { background: var(--primary-light); padding: 12px 15px; border-radius: 8px; border: 1px solid #d4dcfb; margin-top: 5px; }
         .feature-box .check-item { color: #1e3a8a; font-weight: bold; }
 
-        /* 文件上传按钮样式 */
         .file-upload-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 5px;}
         .file-upload-btn { width: 100%; padding: 12px; background: #f8fafc; color: var(--text-main); border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .file-upload-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
@@ -74,11 +68,10 @@
         .btn-export { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-export:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08); }
         
-        /* ================= 预览区 ================= */
         .preview-area { flex: 1; background: #cbd5e1; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
         
         .sheet { 
-            width: 210mm; height: 297mm; background: white; 
+            width: 210mm; min-height: 297mm; background: white; 
             padding: 15mm var(--page-margin) 15mm var(--page-margin); 
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
             position: relative; display: flex; flex-direction: column; flex-shrink: 0;
@@ -90,7 +83,7 @@
         .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; color: #000; }
         .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 60px; display: inline-block; }
 
-        .sheet-content { flex: 1; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
+        .sheet-content { flex: 1; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
 
         .word-block { display: flex; break-inside: avoid; }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
@@ -161,8 +154,8 @@
             <div class="group-title" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                 📊 格式与排版
                 <div class="check-group" style="margin: 0;">
-                    <label class="check-item"><input type="radio" name="unitType" value="px" checked onchange="switchUnit()"> px</label>
-                    <label class="check-item"><input type="radio" name="unitType" value="mm" onchange="switchUnit()"> mm</label>
+                    <label class="check-item"><input type="radio" name="unitType" value="mm" checked onchange="switchUnit()"> mm</label>
+                    <label class="check-item"><input type="radio" name="unitType" value="px" onchange="switchUnit()"> px</label>
                 </div>
             </div>
             
@@ -171,23 +164,23 @@
                 <label class="check-item"><input type="radio" name="gridType" value="mi" onchange="render()"> 米字格</label>
             </div>
 
-            <div class="item-label">左右页边距: <span id="marginVal" class="val-tag">15mm</span></div>
+            <div class="item-label">左右页边距: <span id="marginVal" class="val-tag">15</span></div>
             <input type="range" id="marginRange" oninput="updateStyles()">
 
-            <div class="item-label">格子大小: <span id="sizeVal" class="val-tag">60px</span></div>
+            <div class="item-label">格子大小: <span id="sizeVal" class="val-tag">16</span></div>
             <input type="range" id="sizeRange" oninput="updateStyles()">
 
-            <div class="item-label">词语间距: <span id="wordGapVal" class="val-tag">30px</span></div>
+            <div class="item-label">词语间距: <span id="wordGapVal" class="val-tag">8</span></div>
             <input type="range" id="wordGapRange" oninput="updateStyles()">
 
-            <div class="item-label">行间距: <span id="rowGapVal" class="val-tag">20px</span></div>
+            <div class="item-label">行间距: <span id="rowGapVal" class="val-tag">6</span></div>
             <input type="range" id="rowGapRange" oninput="updateStyles()">
 
-            <div class="item-label">拼音大小</div>
-            <input type="range" id="pySizeRange" oninput="updateStyles()">
+            <div class="item-label">拼音大小: <span id="pySizeVal" class="val-tag">24</span></div>
+            <input type="range" id="pySizeRange" min="12" max="40" value="24" oninput="updateStyles()">
             
-            <div class="item-label">汉字提示大小</div>
-            <input type="range" id="hzSizeRange" oninput="updateStyles()">
+            <div class="item-label">汉字提示大小: <span id="hzSizeVal" class="val-tag">36</span></div>
+            <input type="range" id="hzSizeRange" min="20" max="70" value="36" oninput="updateStyles()">
         </div>
 
         <button class="btn-export" onclick="window.print()">🖨️ 打印 / 导出 PDF</button>
@@ -198,18 +191,16 @@
 
 <script>
     const { pinyin } = pinyinPro;
-    let currentUnit = 'px';
+    let currentUnit = 'mm'; // 默认单位改为 mm
 
+    // 只保留需要切换单位的排版滑块（排除了字体大小）
     const configMap = {
         marginRange:  { px: [20, 100, 56], mm: [5, 30, 15] },
         sizeRange:    { px: [40, 90, 60],  mm: [10, 25, 16] },
         wordGapRange: { px: [10, 80, 30],  mm: [2, 25, 8] },
-        rowGapRange:  { px: [10, 80, 20],  mm: [2, 25, 6] },
-        pySizeRange:  { px: [12, 36, 24],  mm: [3, 10, 6] },
-        hzSizeRange:  { px: [20, 70, 36],  mm: [5, 20, 10] }
+        rowGapRange:  { px: [10, 80, 20],  mm: [2, 25, 6] }
     };
 
-    // 本地字体上传逻辑
     document.getElementById('fontUploader').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -251,20 +242,29 @@
         const size = document.getElementById('sizeRange').value;
         const wordGap = document.getElementById('wordGapRange').value;
         const rowGap = document.getElementById('rowGapRange').value;
+        
+        // 获取字体滑块的值
         const pySize = document.getElementById('pySizeRange').value;
         const hzSize = document.getElementById('hzSizeRange').value;
 
+        // 更新带单位的标签
         document.getElementById('marginVal').innerText = margin + currentUnit;
         document.getElementById('sizeVal').innerText = size + currentUnit;
         document.getElementById('wordGapVal').innerText = wordGap + currentUnit;
         document.getElementById('rowGapVal').innerText = rowGap + currentUnit;
+        
+        // 更新不带单位的纯数字标签
+        document.getElementById('pySizeVal').innerText = pySize;
+        document.getElementById('hzSizeVal').innerText = hzSize;
 
         root.style.setProperty('--page-margin', margin + currentUnit);
         root.style.setProperty('--grid-size', size + currentUnit);
         root.style.setProperty('--word-gap', wordGap + currentUnit);
         root.style.setProperty('--row-gap', rowGap + currentUnit);
-        root.style.setProperty('--pinyin-size', pySize + currentUnit);
-        root.style.setProperty('--hanzi-size', hzSize + currentUnit);
+        
+        // 字体底层强行使用 px 渲染，避免布局错误
+        root.style.setProperty('--pinyin-size', pySize + 'px');
+        root.style.setProperty('--hanzi-size', hzSize + 'px');
         
         render(); 
     }
@@ -328,7 +328,7 @@
 
     function render() {
         const previewArea = document.getElementById('previewArea');
-        previewArea.innerHTML = ''; // 清空预览区
+        previewArea.innerHTML = ''; 
         
         const wordData = parseInput(document.getElementById('wordInput').value);
         const gridType = document.querySelector('input[name="gridType"]:checked').value;
