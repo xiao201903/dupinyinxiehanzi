@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>看拼音写词语专业生成工具 - 移动适配版</title>
+    <title>看拼音写词语专业版 - 纯净美化</title>
     <script src="https://unpkg.com/pinyin-pro"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #3b82f6;
+            --primary: #5e72e4; 
+            --primary-light: #eef0fd;
+            --primary-hover: #475ecd;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --bg-body: #f1f5f9;
+            --bg-panel: #ffffff;
+            
             --grid-size: 60px;
             --grid-color: #d32f2f;
             --pinyin-size: 24px;
@@ -16,42 +24,65 @@
             --row-gap: 20px;
             --word-gap: 30px;
             --page-margin: 15mm;
+            --pinyin-font: 'Andika', sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
-        body { margin: 0; background: #f1f5f9; font-family: 'Noto Sans SC', sans-serif; display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
+        body { margin: 0; background: var(--bg-body); font-family: 'Noto Sans SC', sans-serif; display: flex; height: 100vh; overflow: hidden; flex-direction: row; }
 
-        /* 左侧/上方配置面板 */
-        .sidebar { width: 380px; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 10; flex-shrink: 0; }
-        .config-scroll { padding: 20px; overflow-y: auto; flex: 1; }
-        .group-title { font-size: 15px; font-weight: 700; color: #1e293b; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        /* ================= 侧边栏美化 ================= */
+        .sidebar { width: 380px; background: var(--bg-panel); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; box-shadow: 2px 0 15px rgba(0,0,0,0.03); z-index: 10; flex-shrink: 0; }
         
-        .item-label { display: flex; justify-content: space-between; font-size: 13px; color: #64748b; margin: 10px 0 5px; align-items: center; }
-        input[type="text"], textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; transition: border 0.2s; }
-        input[type="text"]:focus, textarea:focus { border-color: var(--primary); }
-        textarea { resize: vertical; }
+        .config-scroll { padding: 24px 20px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 20px; }
         
-        input[type="range"] { width: 100%; accent-color: var(--primary); margin: 8px 0 15px; }
-        .val-tag { color: var(--primary); font-weight: bold; font-size: 13px; background: #eff6ff; padding: 2px 6px; border-radius: 4px; }
+        /* 优美的滚动条 */
+        .config-scroll::-webkit-scrollbar { width: 6px; }
+        .config-scroll::-webkit-scrollbar-track { background: transparent; }
+        .config-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .config-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .check-group { display: flex; flex-wrap: wrap; gap: 12px; margin: 10px 0 15px; }
-        .check-item { display: flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; color: #334155; }
-
-        /* 右侧预览区 */
-        .preview-area { flex: 1; background: #94a3b8; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        /* 卡片式分组容器 */
+        .config-group { background: #fff; }
         
-        /* 严格的 A4 尺寸设定 */
+        .group-title { font-size: 15px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--primary); padding-left: 10px; background: #f8fafc; padding-top: 8px; padding-bottom: 8px; border-radius: 0 6px 6px 0; }
+        
+        .item-label { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); margin: 12px 0 6px; align-items: center; font-weight: 500; }
+        
+        input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 14px; outline: none; transition: all 0.3s ease; font-family: inherit; background: #f8fafc; color: var(--text-main); }
+        input[type="text"]:focus, textarea:focus { border-color: var(--primary); background: #fff; box-shadow: 0 0 0 3px rgba(94, 114, 228, 0.15); }
+        textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+        
+        input[type="range"] { width: 100%; accent-color: var(--primary); margin: 8px 0 15px; cursor: pointer; }
+        
+        .val-tag { color: var(--primary); font-weight: bold; font-size: 12px; background: var(--primary-light); padding: 3px 8px; border-radius: 6px; }
+
+        .check-group { display: flex; flex-wrap: wrap; gap: 15px; margin: 10px 0; }
+        .check-item { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; color: var(--text-main); transition: opacity 0.2s; }
+        .check-item:hover { opacity: 0.8; }
+        .check-item input[type="checkbox"], .check-item input[type="radio"] { accent-color: var(--primary); cursor: pointer; width: 16px; height: 16px; }
+
+        /* 高亮功能区 */
+        .feature-box { background: var(--primary-light); padding: 12px 15px; border-radius: 8px; border: 1px solid #d4dcfb; margin-top: 5px; }
+        .feature-box .check-item { color: #1e3a8a; font-weight: bold; }
+
+        /* 文件上传按钮样式 */
+        .file-upload-wrap { position: relative; overflow: hidden; display: inline-block; width: 100%; margin-top: 5px;}
+        .file-upload-btn { width: 100%; padding: 12px; background: #f8fafc; color: var(--text-main); border: 1px dashed #cbd5e1; border-radius: 8px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .file-upload-btn:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+        .file-upload-wrap input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+        .btn-export { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-export:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08); }
+        
+        /* ================= 预览区 ================= */
+        .preview-area { flex: 1; background: #cbd5e1; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        
         .sheet { 
-            width: 210mm; 
-            height: 297mm; 
-            background: white; 
-            /* 上下固定 15mm，左右由 CSS 变量控制 */
+            width: 210mm; height: 297mm; background: white; 
             padding: 15mm var(--page-margin) 15mm var(--page-margin); 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2); 
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            flex-shrink: 0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
+            position: relative; display: flex; flex-direction: column; flex-shrink: 0;
+            border-radius: 4px;
         }
 
         .sheet-header { text-align: center; margin-bottom: 8mm; flex-shrink: 0; }
@@ -59,21 +90,22 @@
         .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; color: #000; }
         .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 60px; display: inline-block; }
 
-        /* 词语容器 */
-        .sheet-content { 
-            flex: 1; 
-            overflow: hidden; 
-            display: flex; 
-            flex-wrap: wrap; 
-            align-content: flex-start; 
-            row-gap: var(--row-gap); 
-            column-gap: var(--word-gap); 
-        }
+        .sheet-content { flex: 1; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
 
         .word-block { display: flex; break-inside: avoid; }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
         
-        .pinyin-box { height: calc(var(--pinyin-size) * 1.5); font-family: 'Andika', sans-serif; font-size: var(--pinyin-size); color: #333; display: flex; align-items: flex-end; justify-content: center; width: 100%; padding-bottom: 2px;}
+        .pinyin-box { 
+            height: calc(var(--pinyin-size) * 1.5); 
+            font-family: var(--pinyin-font);
+            font-size: var(--pinyin-size); color: #333; display: flex; align-items: flex-end; 
+            justify-content: center; width: 100%; padding-bottom: 2px;
+            cursor: pointer; border-radius: 4px; transition: background 0.2s;
+        }
+        .pinyin-box:hover { background: #e2e8f0; color: var(--primary); }
+        .pinyin-box::after { content: "✎"; font-size: 12px; position: absolute; top: -5px; right: 0; opacity: 0; color: var(--primary); transition: 0.2s; }
+        .char-unit:hover .pinyin-box::after { opacity: 1; }
+
         .grid-box { width: var(--grid-size); height: var(--grid-size); border: 1px solid var(--grid-color); position: relative; margin-left: -1px; display: flex; justify-content: center; align-items: center; }
         .char-unit:first-child .grid-box { margin-left: 0; }
 
@@ -84,24 +116,11 @@
         .bg-tian { background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='50%25' y1='0' x2='50%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3C/svg%3E"); }
         .bg-mi { background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='50%25' y1='0' x2='50%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='0' y1='0' x2='100%25' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3Cline x1='100%25' y1='0' x2='0' y2='100%25' stroke='%23d32f2f' stroke-width='0.5' stroke-dasharray='3,3'/%3E%3C/svg%3E"); }
 
-        .btn-export { width: 100%; padding: 15px; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: 0.2s; }
-        .btn-export:hover { background: #d97706; }
-        .tips { font-size: 12px; color: #64748b; line-height: 1.6; padding: 10px; background: #f8fafc; border-radius: 6px; margin-top: 5px; border: 1px solid #e2e8f0; }
-
-        /* ================= 移动端响应式适配 ================= */
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: 45vh; border-right: none; border-bottom: 2px solid #cbd5e1; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-            .preview-area { height: 55vh; padding: 15px; align-items: flex-start; /* 靠左对齐方便滑动 */ }
-            .sheet { margin-bottom: 20px; }
-        }
-
-        /* 打印样式 */
         @media print {
             body { background: white; overflow: visible; height: auto; display: block; }
             .sidebar { display: none !important; }
             .preview-area { padding: 0; background: white; overflow: visible; gap: 0; display: block; }
-            .sheet { margin: 0; box-shadow: none; border: none; page-break-after: always; height: 297mm; }
+            .sheet { margin: 0; box-shadow: none; border: none; border-radius: 0; page-break-after: always; height: 297mm; }
         }
     </style>
 </head>
@@ -109,54 +128,67 @@
 
 <aside class="sidebar">
     <div class="config-scroll">
-        <div class="group-title">🏷️ 标题与表头</div>
-        <input type="text" id="docTitle" value="看拼音写词语练习" oninput="render()">
-        <div class="check-group">
-            <label class="check-item"><input type="checkbox" id="showClass" checked onchange="render()"> 班级</label>
-            <label class="check-item"><input type="checkbox" id="showName" checked onchange="render()"> 姓名</label>
-            <label class="check-item"><input type="checkbox" id="showScore" checked onchange="render()"> 得分</label>
-        </div>
         
-        <div class="group-title" style="margin-top:10px;">📝 词语录入</div>
-        <textarea id="wordInput" rows="5" oninput="render()" placeholder="输入词语...">早上*&#10;练习&#10;重(zhòng)量*&#10;音*乐(yuè)</textarea>
-        
-        <div class="group-title" style="margin-top:20px;">⚙️ 功能控制</div>
-        <div class="check-group" style="background: #eff6ff; padding: 10px; border-radius: 6px; border: 1px solid #bfdbfe;">
-            <label class="check-item" style="color: #1e3a8a; font-weight: bold;">
-                <input type="checkbox" id="showAnswer" onchange="render()"> 👁️ 开启答案参考模式
-            </label>
-        </div>
-
-        <div class="group-title" style="margin-top:20px; display: flex; justify-content: space-between;">
-            📊 格式与排版
-            <div class="check-group" style="margin: 0;">
-                <label class="check-item"><input type="radio" name="unitType" value="px" checked onchange="switchUnit()"> px</label>
-                <label class="check-item"><input type="radio" name="unitType" value="mm" onchange="switchUnit()"> mm</label>
+        <div class="config-group">
+            <div class="group-title">🏷️ 标题与表头</div>
+            <input type="text" id="docTitle" value="看拼音写词语练习" oninput="render()">
+            <div class="check-group">
+                <label class="check-item"><input type="checkbox" id="showClass" checked onchange="render()"> 班级</label>
+                <label class="check-item"><input type="checkbox" id="showName" checked onchange="render()"> 姓名</label>
+                <label class="check-item"><input type="checkbox" id="showScore" checked onchange="render()"> 得分</label>
             </div>
         </div>
         
-        <div class="check-group">
-            <label class="check-item"><input type="radio" name="gridType" value="tian" checked onchange="render()"> 田字格</label>
-            <label class="check-item"><input type="radio" name="gridType" value="mi" onchange="render()"> 米字格</label>
+        <div class="config-group">
+            <div class="group-title">📝 词语录入 <span style="font-size:12px;color:var(--text-muted);font-weight:normal;">(点击拼音可修改)</span></div>
+            <textarea id="wordInput" oninput="render()" placeholder="输入词语...">早上*&#10;练习&#10;重量&#10;音乐</textarea>
+        </div>
+        
+        <div class="config-group">
+            <div class="group-title">🔤 字体与模式</div>
+            <div class="file-upload-wrap">
+                <div class="file-upload-btn" id="fontFileName">📁 选择拼音字体 (.ttf/.woff)</div>
+                <input type="file" id="fontUploader" accept=".ttf,.otf,.woff,.woff2">
+            </div>
+            <div class="feature-box">
+                <label class="check-item">
+                    <input type="checkbox" id="showAnswer" onchange="render()"> 👁️ 开启答案参考模式
+                </label>
+            </div>
         </div>
 
-        <div class="item-label">左右页边距: <span id="marginVal" class="val-tag">15mm</span></div>
-        <input type="range" id="marginRange" oninput="updateStyles()">
+        <div class="config-group">
+            <div class="group-title" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                📊 格式与排版
+                <div class="check-group" style="margin: 0;">
+                    <label class="check-item"><input type="radio" name="unitType" value="px" checked onchange="switchUnit()"> px</label>
+                    <label class="check-item"><input type="radio" name="unitType" value="mm" onchange="switchUnit()"> mm</label>
+                </div>
+            </div>
+            
+            <div class="check-group">
+                <label class="check-item"><input type="radio" name="gridType" value="tian" checked onchange="render()"> 田字格</label>
+                <label class="check-item"><input type="radio" name="gridType" value="mi" onchange="render()"> 米字格</label>
+            </div>
 
-        <div class="item-label">格子大小: <span id="sizeVal" class="val-tag">60px</span></div>
-        <input type="range" id="sizeRange" oninput="updateStyles()">
+            <div class="item-label">左右页边距: <span id="marginVal" class="val-tag">15mm</span></div>
+            <input type="range" id="marginRange" oninput="updateStyles()">
 
-        <div class="item-label">词语间距: <span id="wordGapVal" class="val-tag">30px</span></div>
-        <input type="range" id="wordGapRange" oninput="updateStyles()">
+            <div class="item-label">格子大小: <span id="sizeVal" class="val-tag">60px</span></div>
+            <input type="range" id="sizeRange" oninput="updateStyles()">
 
-        <div class="item-label">行间距: <span id="rowGapVal" class="val-tag">20px</span></div>
-        <input type="range" id="rowGapRange" oninput="updateStyles()">
+            <div class="item-label">词语间距: <span id="wordGapVal" class="val-tag">30px</span></div>
+            <input type="range" id="wordGapRange" oninput="updateStyles()">
 
-        <div class="item-label">拼音字体大小: <span id="pySizeVal" class="val-tag">24px</span></div>
-        <input type="range" id="pySizeRange" oninput="updateStyles()">
+            <div class="item-label">行间距: <span id="rowGapVal" class="val-tag">20px</span></div>
+            <input type="range" id="rowGapRange" oninput="updateStyles()">
 
-        <div class="item-label">汉字字体大小: <span id="hzSizeVal" class="val-tag">36px</span></div>
-        <input type="range" id="hzSizeRange" oninput="updateStyles()">
+            <div class="item-label">拼音大小</div>
+            <input type="range" id="pySizeRange" oninput="updateStyles()">
+            
+            <div class="item-label">汉字提示大小</div>
+            <input type="range" id="hzSizeRange" oninput="updateStyles()">
+        </div>
 
         <button class="btn-export" onclick="window.print()">🖨️ 打印 / 导出 PDF</button>
     </div>
@@ -168,8 +200,6 @@
     const { pinyin } = pinyinPro;
     let currentUnit = 'px';
 
-    // 定义控件在 px 和 mm 下的对应参数 [最小值, 最大值, 默认初始值]
-    // 粗略换算：1mm ≈ 3.8px
     const configMap = {
         marginRange:  { px: [20, 100, 56], mm: [5, 30, 15] },
         sizeRange:    { px: [40, 90, 60],  mm: [10, 25, 16] },
@@ -179,25 +209,44 @@
         hzSizeRange:  { px: [20, 70, 36],  mm: [5, 20, 10] }
     };
 
-    // 切换单位并重置滑块状态
+    // 本地字体上传逻辑
+    document.getElementById('fontUploader').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        document.getElementById('fontFileName').innerHTML = '✅ 已加载: ' + file.name;
+        document.getElementById('fontFileName').style.borderColor = 'var(--primary)';
+        document.getElementById('fontFileName').style.color = 'var(--primary)';
+        document.getElementById('fontFileName').style.background = 'var(--primary-light)';
+
+        const fontUrl = URL.createObjectURL(file);
+        const fontName = 'CustomPinyinFont_' + Date.now();
+
+        const newStyle = document.createElement('style');
+        newStyle.appendChild(document.createTextNode(`
+            @font-face {
+                font-family: '${fontName}';
+                src: url('${fontUrl}');
+            }
+        `));
+        document.head.appendChild(newStyle);
+
+        document.documentElement.style.setProperty('--pinyin-font', `'${fontName}', 'Andika', sans-serif`);
+        render();
+    });
+
     function switchUnit() {
         currentUnit = document.querySelector('input[name="unitType"]:checked').value;
-        
         Object.keys(configMap).forEach(id => {
             const el = document.getElementById(id);
             const conf = configMap[id][currentUnit];
-            el.min = conf[0];
-            el.max = conf[1];
-            el.value = conf[2]; // 切换单位时恢复到该单位的默认最佳值
+            el.min = conf[0]; el.max = conf[1]; el.value = conf[2];
         });
-        
         updateStyles();
     }
 
-    // 更新 CSS 变量
     function updateStyles() {
         const root = document.documentElement;
-        
         const margin = document.getElementById('marginRange').value;
         const size = document.getElementById('sizeRange').value;
         const wordGap = document.getElementById('wordGapRange').value;
@@ -205,15 +254,11 @@
         const pySize = document.getElementById('pySizeRange').value;
         const hzSize = document.getElementById('hzSizeRange').value;
 
-        // 更新标签显示
         document.getElementById('marginVal').innerText = margin + currentUnit;
         document.getElementById('sizeVal').innerText = size + currentUnit;
         document.getElementById('wordGapVal').innerText = wordGap + currentUnit;
         document.getElementById('rowGapVal').innerText = rowGap + currentUnit;
-        document.getElementById('pySizeVal').innerText = pySize + currentUnit;
-        document.getElementById('hzSizeVal').innerText = hzSize + currentUnit;
 
-        // 设置 CSS 变量
         root.style.setProperty('--page-margin', margin + currentUnit);
         root.style.setProperty('--grid-size', size + currentUnit);
         root.style.setProperty('--word-gap', wordGap + currentUnit);
@@ -224,57 +269,36 @@
         render(); 
     }
 
-    // 核心解析器
     function parseInput(text) {
         const lines = text.split('\n');
         const result = [];
-
         lines.forEach(line => {
             line = line.trim();
             if (!line) return;
-
             let charsData = [];
             let i = 0;
-            
             while (i < line.length) {
                 let char = line[i];
                 if (char === '*' || char === '(' || char === ')') { i++; continue; }
-
                 let customPinyin = null;
                 let isHint = false;
                 let nextIdx = i + 1;
-
                 if (nextIdx < line.length && line[nextIdx] === '(') {
                     let endIdx = line.indexOf(')', nextIdx);
-                    if (endIdx !== -1) {
-                        customPinyin = line.substring(nextIdx + 1, endIdx);
-                        nextIdx = endIdx + 1;
-                    }
+                    if (endIdx !== -1) { customPinyin = line.substring(nextIdx + 1, endIdx); nextIdx = endIdx + 1; }
                 }
-
-                if (nextIdx < line.length && line[nextIdx] === '*') {
-                    isHint = true;
-                    nextIdx++;
-                }
-
+                if (nextIdx < line.length && line[nextIdx] === '*') { isHint = true; nextIdx++; }
                 charsData.push({ char, pinyin: customPinyin, isHint });
                 i = nextIdx;
             }
-
             let pureText = charsData.map(item => item.char).join('');
             let autoPinyins = pinyin(pureText, { type: 'array' });
-
-            charsData.forEach((item, idx) => {
-                if (!item.pinyin) item.pinyin = autoPinyins[idx] || ''; 
-            });
-
+            charsData.forEach((item, idx) => { if (!item.pinyin) item.pinyin = autoPinyins[idx] || ''; });
             if (charsData.length > 0) result.push(charsData);
         });
-        
         return result;
     }
 
-    // 创建新页面
     function createNewSheet() {
         const sheet = document.createElement('div');
         sheet.className = 'sheet';
@@ -283,27 +307,28 @@
         
         let metaHTML = '';
         if (showAnswer) {
-            metaHTML = `<div class="meta-item" style="color:#ef4444; font-weight:bold; border: 1px solid #ef4444; padding: 2px 10px; border-radius: 4px;">本页为答案参考</div>`;
+            metaHTML = `<div class="meta-item" style="color:#ef4444; font-weight:bold; border: 1px solid #ef4444; padding: 2px 10px; border-radius: 4px; background: #fef2f2;">本页为答案参考</div>`;
         } else {
             if(document.getElementById('showClass').checked) metaHTML += `<div class="meta-item">班级：<span></span></div>`;
             if(document.getElementById('showName').checked) metaHTML += `<div class="meta-item">姓名：<span></span></div>`;
             if(document.getElementById('showScore').checked) metaHTML += `<div class="meta-item">得分：<span></span></div>`;
         }
-
         sheet.innerHTML = `
-            <div class="sheet-header">
-                <div class="sheet-title">${title}</div>
-                <div class="sheet-meta">${metaHTML}</div>
-            </div>
+            <div class="sheet-header"><div class="sheet-title">${title}</div><div class="sheet-meta">${metaHTML}</div></div>
             <div class="sheet-content"></div>
         `;
         return sheet;
     }
 
-    // 渲染函数
+    window.editPinyin = function(element, char) {
+        const currentPinyin = element.innerText;
+        const newPinyin = prompt(`正在修改汉字 "${char}" 的拼音：\n(你可以直接输入如 zhòng 或 chong)`, currentPinyin);
+        if (newPinyin !== null && newPinyin.trim() !== "") { element.innerText = newPinyin.trim(); }
+    };
+
     function render() {
         const previewArea = document.getElementById('previewArea');
-        previewArea.innerHTML = ''; 
+        previewArea.innerHTML = ''; // 清空预览区
         
         const wordData = parseInput(document.getElementById('wordInput').value);
         const gridType = document.querySelector('input[name="gridType"]:checked').value;
@@ -324,17 +349,11 @@
                 
                 let hanziClass = '';
                 let displayChar = '';
-                
-                if (item.isHint) {
-                    hanziClass = 'hanzi-trace';
-                    displayChar = item.char;
-                } else if (showAnswer) {
-                    hanziClass = 'hanzi-answer';
-                    displayChar = item.char;
-                }
+                if (item.isHint) { hanziClass = 'hanzi-trace'; displayChar = item.char; } 
+                else if (showAnswer) { hanziClass = 'hanzi-answer'; displayChar = item.char; }
 
                 unit.innerHTML = `
-                    <div class="pinyin-box">${item.pinyin}</div>
+                    <div class="pinyin-box" onclick="editPinyin(this, '${item.char}')" title="点击修改拼音">${item.pinyin}</div>
                     <div class="grid-box ${bgClass}">
                         ${displayChar ? `<div class="hanzi-content ${hanziClass}">${displayChar}</div>` : ''}
                     </div>
@@ -344,7 +363,6 @@
 
             contentArea.appendChild(wordBlock);
 
-            // 溢出检测逻辑
             if (contentArea.scrollHeight > contentArea.clientHeight + 2) { 
                 contentArea.removeChild(wordBlock); 
                 currentSheet = createNewSheet();
@@ -356,7 +374,7 @@
     }
 
     window.onload = () => {
-        switchUnit(); // 初始化时会应用默认的 px 设置并渲染
+        switchUnit(); 
     };
 </script>
 </body>
