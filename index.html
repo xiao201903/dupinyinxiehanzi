@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>看拼音写词语专业版 </title>
+    <title>看拼音写词语专业版 - 物理尺寸版</title>
     <script src="https://unpkg.com/pinyin-pro"></script>
     <link href="https://fonts.googleapis.com/css2?family=Andika&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -68,11 +68,14 @@
         .btn-export { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08); display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-export:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08); }
         
-        .preview-area { flex: 1; background: #cbd5e1; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        .preview-area { flex: 1; background: #cbd5e1; overflow: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         
         .sheet { 
-            width: 210mm; min-height: 297mm; background: white; 
+            width: 210mm; 
+            height: 297mm; /* ⭐ 修复：这里改回绝对高度，才能触发溢出换页逻辑 */
+            background: white; 
             padding: 15mm var(--page-margin) 15mm var(--page-margin); 
+            margin-bottom: 30px; /* ⭐ 新增：多张纸之间的间距 */
             box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
             position: relative; display: flex; flex-direction: column; flex-shrink: 0;
             border-radius: 4px;
@@ -83,7 +86,7 @@
         .sheet-meta { display: flex; justify-content: center; gap: 10mm; font-size: 14px; color: #000; }
         .meta-item span { border-bottom: 1px solid #000; padding: 0 15px; min-width: 60px; display: inline-block; }
 
-        .sheet-content { flex: 1; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
+        .sheet-content { flex: 1; overflow: hidden; display: flex; flex-wrap: wrap; align-content: flex-start; row-gap: var(--row-gap); column-gap: var(--word-gap); }
 
         .word-block { display: flex; break-inside: avoid; }
         .char-unit { display: flex; flex-direction: column; align-items: center; }
@@ -191,9 +194,8 @@
 
 <script>
     const { pinyin } = pinyinPro;
-    let currentUnit = 'mm'; // 默认单位改为 mm
+    let currentUnit = 'mm'; 
 
-    // 只保留需要切换单位的排版滑块（排除了字体大小）
     const configMap = {
         marginRange:  { px: [20, 100, 56], mm: [5, 30, 15] },
         sizeRange:    { px: [40, 90, 60],  mm: [10, 25, 16] },
@@ -243,17 +245,14 @@
         const wordGap = document.getElementById('wordGapRange').value;
         const rowGap = document.getElementById('rowGapRange').value;
         
-        // 获取字体滑块的值
         const pySize = document.getElementById('pySizeRange').value;
         const hzSize = document.getElementById('hzSizeRange').value;
 
-        // 更新带单位的标签
         document.getElementById('marginVal').innerText = margin + currentUnit;
         document.getElementById('sizeVal').innerText = size + currentUnit;
         document.getElementById('wordGapVal').innerText = wordGap + currentUnit;
         document.getElementById('rowGapVal').innerText = rowGap + currentUnit;
         
-        // 更新不带单位的纯数字标签
         document.getElementById('pySizeVal').innerText = pySize;
         document.getElementById('hzSizeVal').innerText = hzSize;
 
@@ -262,7 +261,6 @@
         root.style.setProperty('--word-gap', wordGap + currentUnit);
         root.style.setProperty('--row-gap', rowGap + currentUnit);
         
-        // 字体底层强行使用 px 渲染，避免布局错误
         root.style.setProperty('--pinyin-size', pySize + 'px');
         root.style.setProperty('--hanzi-size', hzSize + 'px');
         
@@ -363,6 +361,7 @@
 
             contentArea.appendChild(wordBlock);
 
+            // 核心换页逻辑：如果内容超出了A4纸内部高度，就把这个词语放到下一页去
             if (contentArea.scrollHeight > contentArea.clientHeight + 2) { 
                 contentArea.removeChild(wordBlock); 
                 currentSheet = createNewSheet();
